@@ -38,7 +38,7 @@ export default class MKButton extends Component {
 			return (
 				<ActivityIndicator
 				  animating={true}
-				  size='small'
+				  size='large'
 				  style={styles.spinner}
 				  color={this.props.activityIndicatorColor || 'black'}
 				/>
@@ -60,10 +60,10 @@ export default class MKButton extends Component {
 		delayPressIn: this.props.delayPressIn,
 		delayPressOut: this.props.delayPressOut,
 	};
-
+	
     return (
       <View style={styles.container}>
-	<TouchableOpacity 
+	<TouchableOpacity disabled={this.props.btndisabled}
 		{...touchableProps}
 		style={[styles.button, this.props.style]}>
 		{this._renderInnerText()}
@@ -75,11 +75,9 @@ export default class MKButton extends Component {
 
 const styles = StyleSheet.create({
   button: {
-    height: 38,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 8,
     padding: 10,
     marginBottom:10,
     alignSelf: 'stretch',
@@ -89,6 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     backgroundColor: 'transparent',
+    fontWeight:'bold'
   },
   spinner: {
     alignSelf: 'center',

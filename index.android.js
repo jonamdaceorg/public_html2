@@ -12,8 +12,7 @@ import {
   View
 } from 'react-native';
 
-import MKButton from "./Platform/Component/MKButton";
-import MKTextField from "./Platform/Component/MKTextField";
+import EditProfile from "./Platform/Templates/EditProfile";
 
 export default class OneStepShop extends Component {
 	constructor(props){
@@ -29,23 +28,7 @@ export default class OneStepShop extends Component {
 	render() {
 		return (
 			<View style={styles.container}>
-				<Text style={styles.welcome}>
-				  Welcome to React Native!
-				</Text>
-				<Text style={styles.instructions}>
-				  To get started, edit index.android.js
-				</Text>
-				<Text style={styles.instructions}>
-				  Double tap R on your keyboard to reload,{'\n'}
-				  Shake or press menu button for dev menu
-				</Text>
-				<MKButton isLoading={this.state.isLoading}>Sign Up</MKButton>
-				<MKButton onPress={()=>this.register()}>Sign Up</MKButton>
-
-        <MKTextField
-          placeholder={"name of field"}
-          value={"value of field"}
-        />
+				<EditProfile />
 			</View>
 		);
 	}
@@ -54,9 +37,8 @@ export default class OneStepShop extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#FFF',
   },
   welcome: {
     fontSize: 20,
