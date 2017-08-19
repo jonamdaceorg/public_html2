@@ -12,23 +12,17 @@ import {
   View
 } from 'react-native';
 
-import EditProfile from "./Platform/Templates/EditProfile";
-
+import App from "./Platform/App";
 export default class OneStepShop extends Component {
 	constructor(props){
 		super(props);
 		this.state = {isLoading : false}
 	}
-	
-	register(){
-		this.setState({isLoading : true});
-		alert("register");
-	}
 
 	render() {
 		return (
 			<View style={styles.container}>
-				<EditProfile />
+				<App />
 			</View>
 		);
 	}
@@ -39,16 +33,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#FFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
   },
 });
 
