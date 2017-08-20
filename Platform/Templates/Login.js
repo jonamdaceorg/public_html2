@@ -19,6 +19,7 @@ export default class Login extends Component {
 			inputMobileNumber : '',
 			inputPassword : ''
 		};
+		this.navigate=this.props.navigation.navigate;
 	}
 
 	componentDidMount() {
@@ -48,8 +49,8 @@ export default class Login extends Component {
 		this.setState({height : height, width : width});
 	}
 
-	onPressRedirect(){
-		alert("Redirect");
+	onPressRedirect(routes){
+		this.navigate(routes);
 	}
 
 	render() { 
@@ -60,16 +61,6 @@ export default class Login extends Component {
 		var inputHighlightColor = "#00BCD4";
 		return (
 		<View style={[{height : this.state.height, flex: 1, width : layoutWidth}]} onLayout={()=> this.updateLayout()}>
-		<Navbar
-		    title={"Login"}
-		    bgColor={"orange"}
-		    left={{
-			icon: "ios-arrow-back",
-			onPress: () => this.onPressRedirect('LoginScreenForCustomer')
-		    }}
-		    style={{height:60}}
-		/>
-
 			<ScrollView >
 		      		<View style={{flex: 1, width:inputWidth, alignSelf:'center'}}>
 
@@ -83,7 +74,7 @@ export default class Login extends Component {
 						value = {this.state.inputPassword}
 						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}} />
 					<View style={{paddingTop: 30}}></View>
-					<TouchableOpacity onPress={()=> this.onPressRedirect()}>					
+					<TouchableOpacity onPress={()=> this.onPressRedirect('ForgotPassword')}>					
 						<Text style={{textAlign:'right', color: '#60AAC6', fontSize: 14}}>FORGOT PASSWORD?</Text>
 					</TouchableOpacity>
 				</View>

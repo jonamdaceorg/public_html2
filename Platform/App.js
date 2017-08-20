@@ -1,15 +1,62 @@
-'use strict';
-import React, {Component, PropTypes} from "react";
-import {View, StyleSheet, Text, ScrollView, Dimensions} from "react-native";
+import React from 'react';
+import {
+  AppRegistry,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import { StackNavigator } from 'react-navigation';
 
-import EditProfile from "./Templates/EditProfile";
-import ForgotPassword from "./Templates/ForgotPassword";
 import Login from "./Templates/Login";
+import ForgotPassword from "./Templates/ForgotPassword";
 
-export default class App extends Component {
-	render() { 
-		return (
-			<Text style={{paddingTop: 30}}>welcome</Text>
-		);
-	}
+class HomeScreen extends React.Component {
+static navigationOptions = { title: 'Welcome', header: null };
+  render() {
+    const { navigate } = this.props.navigation;
+    return <View>
+        <Text>Hello, Chat App!</Text>
+        <TouchableOpacity
+          onPress={() => navigate('Login')}
+          title="Chat with Lucy"
+        ><Text>Hello, Chat App!</Text></TouchableOpacity>
+      </View>;
+  }
 }
+
+const SimpleApp = StackNavigator(
+{
+	Home: { 
+		screen: HomeScreen,
+	},
+  	Login: {
+		screen: Login,
+		navigationOptions: ({ navigation }) => ({
+			tabBarLabel: 'Three',
+			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+			title: 'Login',
+			headerStyle: { backgroundColor: 'orange' },
+			headerTintColor: '#fff',
+			//headerRight: <Text navigation={navigation} >test</Text>
+		})
+	},
+	ForgotPassword: { 
+		screen: ForgotPassword,
+		navigationOptions: ({ navigation }) => ({
+			tabBarLabel: 'Three',
+			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+			title: 'Forgot Password',
+			headerStyle: { backgroundColor: 'orange' },
+			headerTintColor: '#fff',
+			//headerRight: <Text navigation={navigation} >test</Text>
+		})
+
+	},
+},
+{ 
+    headerMode: 'screen' 
+}
+);
+
+AppRegistry.registerComponent('OneStepShop', () => SimpleApp);
+

@@ -46,6 +46,10 @@ export default class ForgotPassword extends Component {
 		this.setState({height : height, width : width});
 	}
 
+	onPressRedirect(routes){
+		this.navigate(routes);
+	}
+
 	render() { 
 		var inputWidth = this.state.width-30;
 		var layoutWidth = this.state.width;
@@ -54,16 +58,6 @@ export default class ForgotPassword extends Component {
 		var inputHighlightColor = "#00BCD4";
 		return (
 		<View style={[{height : this.state.height, flex: 1, width : layoutWidth}]} onLayout={()=> this.updateLayout()}>
-		<Navbar
-		    title={"Forgot Password"}
-		    bgColor={"orange"}
-		    left={{
-			icon: "ios-arrow-back",
-			onPress: () => this.onPressRedirect('LoginScreenForCustomer')
-		    }}
-		    style={{height:60}}
-		/>
-
 			<ScrollView >
 		      		<View style={{flex: 1, width:inputWidth, alignSelf:'center'}}>
 
