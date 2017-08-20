@@ -9,25 +9,24 @@ import { StackNavigator } from 'react-navigation';
 
 import Login from "./Templates/Login";
 import ForgotPassword from "./Templates/ForgotPassword";
-
-class HomeScreen extends React.Component {
-static navigationOptions = { title: 'Welcome', header: null };
-  render() {
-    const { navigate } = this.props.navigation;
-    return <View>
-        <Text>Hello, Chat App!</Text>
-        <TouchableOpacity
-          onPress={() => navigate('Login')}
-          title="Chat with Lucy"
-        ><Text>Hello, Chat App!</Text></TouchableOpacity>
-      </View>;
-  }
-}
+import HomeScreen from "./Templates/HomeScreen";
+import Signup from "./Templates/Signup";
 
 const SimpleApp = StackNavigator(
 {
 	Home: { 
 		screen: HomeScreen,
+	},
+	Signup : {
+		screen: Signup,
+		navigationOptions: ({ navigation }) => ({
+			tabBarLabel: 'Three',
+			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+			title: 'Sign Up',
+			headerStyle: { backgroundColor: 'orange' },
+			headerTintColor: '#fff',
+			//headerRight: <Text navigation={navigation} >test</Text>
+		})
 	},
   	Login: {
 		screen: Login,
