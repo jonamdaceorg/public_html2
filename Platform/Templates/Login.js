@@ -67,12 +67,17 @@ export default class Login extends Component {
 					<MKTextInput label={'Mobile Number'} highlightColor={inputHighlightColor}
 						onChangeText={(inputMobileNumber) => this.updateMyState(inputMobileNumber, 'inputMobileNumber')}
 						value = {this.state.inputMobileNumber}
-						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}} />
+						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+						keyboardType={'numeric'} maxLength={10} returnKeyType={'next'} ref="FirstInput" 
+						onSubmitEditing={(event) => { this.refs.SecondInput.focus(); }}
+						/>
 
 					<MKTextInput label={'Password'} highlightColor={inputHighlightColor}  
 						onChangeText={(inputPassword) => this.updateMyState(inputPassword, 'inputPassword')}
 						value = {this.state.inputPassword}
-						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}} />
+						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+						secureTextEntry={true} returnKeyType={'go'} ref="SecondInput"
+						/>
 					<View style={{paddingTop: 30}}></View>
 					<TouchableOpacity onPress={()=> this.onPressRedirect('ForgotPassword')}>					
 						<Text style={{textAlign:'right', color: '#60AAC6', fontSize: 14}}>FORGOT PASSWORD?</Text>

@@ -64,7 +64,9 @@ export default class ForgotPassword extends Component {
 					<MKTextInput label={'Mobile Number'} highlightColor={inputHighlightColor}
 						onChangeText={(inputMobileNumber) => this.updateMyState(inputMobileNumber, 'inputMobileNumber')}
 						value = {this.state.inputMobileNumber}
-						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}} />
+						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}} 
+						keyboardType={'numeric'} maxLength={10}
+						/>
 
 					<View style={{paddingTop: 30}}></View>
 				</View>
