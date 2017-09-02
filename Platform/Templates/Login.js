@@ -1,7 +1,6 @@
 'use strict';
 import React, {Component, PropTypes} from "react";
 import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, TouchableOpacity} from "react-native";
-import { Container, Navbar } from 'navbar-native';
 
 import CommonStyle from "../Styles/CommonStyle";
 import MKButton from "../Component/MKButton";
@@ -16,10 +15,33 @@ export default class Login extends Component {
 			isLoading : false,
 			height : height,
 			width : width,
+			errorsJson:{
+				inputMobileNumber : null,
+				inputPassword : null							
+			},
 			inputMobileNumber : '',
 			inputPassword : ''
 		};
 		this.navigate=this.props.navigation.navigate;
+		this.onFocus = this.onFocus.bind(this);
+		this.focusNextField = this.focusNextField.bind(this);
+	}
+
+	focusNextField(nextField) {
+		this.refs[nextField].focus(); 
+	}
+
+	onFocus() {
+		let errorsJson = this.state.errorsJson; 
+		var that = this;
+		for (let name in errorsJson) {
+			let ref = this.refs[name];
+			if (ref && ref.isFocused()) {
+				errorsJson[name] = null;
+			}
+		}
+		that.updateMyState(errorsJson, 'errorsJson');
+		//alert(JSON.stringify(this.state.errorsJson));
 	}
 
 	componentDidMount() {
@@ -29,13 +51,30 @@ export default class Login extends Component {
 	getLogin(){
 		var inputMobileNumberValue = this.state.inputMobileNumber;
 		var inputPassword = this.state.inputPassword;
+		var isValid = 1;
+		var stateArray = this.state;
+		var errorsJson = this.state.errorsJson;
+		Object.keys(errorsJson).forEach(function(key) {
+			var stateArrayValue = stateArray[key];
+			if(stateArrayValue == null || stateArrayValue==""){
+				errorsJson[key] = "This field is required";
+				isValid = 0;
+			}
+			//isValid +=  "stateArrayValue : "+stateArrayValue + " stateArrayKey : "+key
+		});
+		//alert(isValid+JSON.stringify(errorsJson));
+		if(isValid == 1){
+
+		}
 
 		//alert(this.state.inputEmail + "test"+ this.state.inputMobileNumber);
-		if(!this.state.isLoading){
-			this.setState({isLoading : true});
-		} else {
-			this.setState({isLoading : false});
-		}
+		/*if(isValid!=null){
+			if(!this.state.isLoading){
+				this.setState({isLoading : true});
+			} else {
+				this.setState({isLoading : false});
+			}
+		}*/
 	}
 
 	updateMyState(value, keyName){
@@ -68,15 +107,17 @@ export default class Login extends Component {
 						onChangeText={(inputMobileNumber) => this.updateMyState(inputMobileNumber, 'inputMobileNumber')}
 						value = {this.state.inputMobileNumber}
 						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-						keyboardType={'numeric'} maxLength={10} returnKeyType={'next'} ref="FirstInput" 
-						onSubmitEditing={(event) => { this.refs.SecondInput.focus(); }}
+						keyboardType={'numeric'} maxLength={10} returnKeyType={'next'} ref="inputMobileNumber" 
+						onSubmitEditing={(event) => this.focusNextField('inputPassword')}
+						onFocus={()=>this.onFocus()}
 						/>
 
 					<MKTextInput label={'Password'} highlightColor={inputHighlightColor}  
 						onChangeText={(inputPassword) => this.updateMyState(inputPassword, 'inputPassword')}
 						value = {this.state.inputPassword}
 						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-						secureTextEntry={true} returnKeyType={'go'} ref="SecondInput"
+						secureTextEntry={true} returnKeyType={'go'} ref="inputPassword"
+						onFocus={()=>this.onFocus()}
 						/>
 					<View style={{paddingTop: 30}}></View>
 					<TouchableOpacity onPress={()=> this.onPressRedirect('ForgotPassword')}>					

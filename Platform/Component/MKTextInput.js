@@ -26,6 +26,12 @@ export default class MKTextInput extends Component {
   measureLayout(...args){
     this.refs.wrapper.measureLayout(...args)
   }
+	async myonfocus(){
+		await this.setState({isFocused: true});
+            	this.refs.floatingLabel.floatLabel();
+            	this.refs.underline.expandLine();
+            	this.props.onFocus && this.props.onFocus();
+	}
   componentWillReceiveProps(nextProps: Object){
     if(this.props.text !== nextProps.value && !this.state.isFocused){
       nextProps.value.length !== 0 ?
@@ -72,12 +78,7 @@ export default class MKTextInput extends Component {
             color: textBlurColor
           } : {}, inputStyle,  this.state.height ? {height: this.state.height} : {}]}
           multiline={multiline}
-          onFocus={() => {
-            this.setState({isFocused: true});
-            this.refs.floatingLabel.floatLabel();
-            this.refs.underline.expandLine();
-            onFocus && onFocus();
-          }}
+          onFocus={() => this.myonfocus()}
           onBlur={() => {
             this.setState({isFocused: false});
             !this.state.text.length && this.refs.floatingLabel.sinkLabel();

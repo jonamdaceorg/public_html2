@@ -1,7 +1,6 @@
 'use strict';
 import React, {Component, PropTypes} from "react";
 import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions} from "react-native";
-import { Container, Navbar } from 'navbar-native';
 
 import CommonStyle from "../Styles/CommonStyle";
 import MKButton from "../Component/MKButton";
