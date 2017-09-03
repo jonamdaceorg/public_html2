@@ -1,6 +1,6 @@
 'use strict';
 import React, {Component, PropTypes} from "react";
-import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions} from "react-native";
+import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, TouchableOpacity} from "react-native";
 
 import CommonStyle from "../Styles/CommonStyle";
 import MKButton from "../Component/MKButton";
@@ -15,22 +15,62 @@ export default class ForgotPassword extends Component {
 			isLoading : false,
 			height : height,
 			width : width,
+			errorsJson:{
+				inputMobileNumber : null						
+			},
 			inputMobileNumber : ''
 		};
+		this.navigate=this.props.navigation.navigate;
+		this.onFocus = this.onFocus.bind(this);
+		this.focusNextField = this.focusNextField.bind(this);
+	}
+
+	focusNextField(nextField) {
+		this.refs[nextField].focus(); 
+	}
+
+	onFocus() {
+		let errorsJson = this.state.errorsJson; 
+		var that = this;
+		for (let name in errorsJson) {
+			let ref = this.refs[name];
+			if (ref && ref.isFocused()) {
+				errorsJson[name] = null;
+			}
+		}
+		that.updateMyState(errorsJson, 'errorsJson');
 	}
 
 	componentDidMount() {
 
 	}
 
-	resetPassword(){
-		var inputMobileNumberValue = this.state.inputMobileNumber;
+	async resetPassword(){
+		var that = this;
+		var inputMobileNumberValue = that.state.inputMobileNumber;
+		var isValid = 1;
+		var stateArray = that.state;
+		var errorsJson = that.state.errorsJson;
+		Object.keys(errorsJson).forEach(function(key) {
+			var stateArrayValue = stateArray[key];
+			if(stateArrayValue == null || stateArrayValue==""){
+				errorsJson[key] = "This field is required";
+				isValid = 0;
+			}  else if( key == 'inputMobileNumber' && stateArrayValue.length!=10){
+				errorsJson[key] = "Length should not be less than 10";
+				isValid = 0;
+			} else if( key == 'inputMobileNumber' && isNaN(stateArrayValue)){
+				errorsJson[key] = "Invalid Mobile Number";
+				isValid = 0;
+			} else {
+				errorsJson[key] = null;
+			}
+		});
+		await that.updateMyState(errorsJson, 'errorsJson');
+		if(isValid == 1){
+				this.setState({isLoading : true});
 
-		//alert(this.state.inputEmail + "test"+ this.state.inputMobileNumber);
-		if(!this.state.isLoading){
-			this.setState({isLoading : true});
-		} else {
-			this.setState({isLoading : false});
+				this.setState({isLoading : false});
 		}
 	}
 
@@ -55,6 +95,14 @@ export default class ForgotPassword extends Component {
 		var inputHeight = 38;
 		var inputFontSize = 16;
 		var inputHighlightColor = "#00BCD4";
+
+		//Error Block Code start
+		var inputMobileNumberError = null;
+		if(this.state.errorsJson.inputMobileNumber != null){
+			inputMobileNumberError = <Text style={CommonStyle.errorText}>{this.state.errorsJson.inputMobileNumber}</Text>;
+		}
+		//Error Block Code end
+
 		return (
 		<View style={[{height : this.state.height, flex: 1, width : layoutWidth}]} onLayout={()=> this.updateLayout()}>
 			<ScrollView >
@@ -63,9 +111,12 @@ export default class ForgotPassword extends Component {
 					<MKTextInput label={'Mobile Number'} highlightColor={inputHighlightColor}
 						onChangeText={(inputMobileNumber) => this.updateMyState(inputMobileNumber, 'inputMobileNumber')}
 						value = {this.state.inputMobileNumber}
-						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}} 
-						keyboardType={'numeric'} maxLength={10}
+						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+						keyboardType={'numeric'} maxLength={10} returnKeyType={'next'} ref="inputMobileNumber" 
+						onSubmitEditing={(event) => this.resetPassword()}
+						onFocus={()=>this.onFocus()}
 						/>
+						{ inputMobileNumberError }
 
 					<View style={{paddingTop: 30}}></View>
 				</View>

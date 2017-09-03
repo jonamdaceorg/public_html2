@@ -10,5 +10,10 @@ module.exports = StyleSheet.create({
 		fontSize: 16,
 		height: 38,
 		width:200
+	},
+	errorText : {
+		fontSize: 13,
+		color: 'red',
+		paddingTop : 15
 	}
 });
