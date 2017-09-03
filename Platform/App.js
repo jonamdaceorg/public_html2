@@ -11,9 +11,13 @@ import Login from "./Templates/Login";
 import ForgotPassword from "./Templates/ForgotPassword";
 import HomeScreen from "./Templates/HomeScreen";
 import Signup from "./Templates/Signup";
+import MyAccount from "./Templates/MyAccount";
 
 const SimpleApp = StackNavigator(
 {
+	MyAccount: { 
+		screen: MyAccount,
+	},
 	Home: { 
 		screen: HomeScreen,
 	},
