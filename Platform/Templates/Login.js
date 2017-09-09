@@ -5,6 +5,7 @@ import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, Tou
 import CommonStyle from "../Styles/CommonStyle";
 import MKButton from "../Component/MKButton";
 import MKTextInput from "../Component/MKTextInput";
+import { doPost } from "../Component/MKActions";
 
 export default class Login extends Component {
 
@@ -72,9 +73,14 @@ export default class Login extends Component {
 		});
 		await that.updateMyState(errorsJson, 'errorsJson');
 		if(isValid == 1){
-				this.setState({isLoading : true});
-
-				this.setState({isLoading : false});
+			var postJson = new FormData();
+			postJson.append("username", that.state.inputMobileNumber);
+			postJson.append("password", that.state.inputPassword);
+			var subUrl = "getLoginFromApps";
+			var response = await doPost(subUrl, postJson);
+			//alert(JSON.stringify(response));
+			//this.setState({isLoading : true});
+			//this.setState({isLoading : false});
 		}
 	}
 
