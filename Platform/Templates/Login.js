@@ -1,6 +1,6 @@
 'use strict';
 import React, {Component, PropTypes} from "react";
-import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, TouchableOpacity} from "react-native";
+import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, TouchableOpacity, AsyncStorage} from "react-native";
 
 import CommonStyle from "../Styles/CommonStyle";
 import MKButton from "../Component/MKButton";
@@ -69,7 +69,6 @@ export default class Login extends Component {
 			} else {
 				errorsJson[key] = null;
 			}
-			//isValid +=  "stateArrayValue : "+stateArrayValue + " stateArrayKey : "+key
 		});
 		await that.updateMyState(errorsJson, 'errorsJson');
 		if(isValid == 1){
@@ -77,10 +76,32 @@ export default class Login extends Component {
 			postJson.append("username", that.state.inputMobileNumber);
 			postJson.append("password", that.state.inputPassword);
 			var subUrl = "getLoginFromApps";
+			that.setState({isLoading : true});
 			var response = await doPost(subUrl, postJson);
-			//alert(JSON.stringify(response));
-			//this.setState({isLoading : true});
-			//this.setState({isLoading : false});
+			if(response != null){				
+				var active = response['active'];
+				if(active!=null && (active == "active" ||  active == "InActive")){
+					var userid = response['userid']; var userCode = response['userCode']; var name = response['name'];
+					var lastlogin = response['lastlogin']; var img = response['img'];
+					await AsyncStorage.setItem('userid', userid); await AsyncStorage.setItem('userCode', userCode);
+					await AsyncStorage.setItem('active', active); await AsyncStorage.setItem('name', name);
+					await AsyncStorage.setItem('lastlogin', lastlogin); await AsyncStorage.setItem('img', img);
+					setTimeout(function(){ 
+						that.setState({isLoading : false}); 
+						that.onPressRedirect("MyAccount");
+					}, 1000);
+				} else if(active == "InActive"){
+					setTimeout(function(){ 
+						that.setState({isLoading : false}); 
+						alert("Your Profile was not activated!");
+					}, 1000);
+				} else {
+					setTimeout(function(){ 
+						that.setState({isLoading : false}); 
+						alert("Username/Password is incorrect");
+					}, 1000);
+				}
+			}
 		}
 	}
 
