@@ -6,6 +6,7 @@ import CommonStyle from "../Styles/CommonStyle";
 import MKButton from "../Component/MKButton";
 import MKTextInput from "../Component/MKTextInput";
 import { doPost } from "../Component/MKActions";
+import MKSpinner from "../Component/MKSpinner";
 
 export default class Login extends Component {
 
@@ -14,6 +15,7 @@ export default class Login extends Component {
 	    	super(props);
 		this.state = {
 			isLoading : false,
+			isCancelable : true,
 			height : height,
 			width : width,
 			errorsJson:{
@@ -86,6 +88,10 @@ export default class Login extends Component {
 					await AsyncStorage.setItem('userid', userid); await AsyncStorage.setItem('userCode', userCode);
 					await AsyncStorage.setItem('active', active); await AsyncStorage.setItem('name', name);
 					await AsyncStorage.setItem('lastlogin', lastlogin); await AsyncStorage.setItem('img', img);
+
+					await AsyncStorage.setItem('username', that.state.inputMobileNumber);
+					await AsyncStorage.setItem('password', that.state.inputPassword);
+
 					setTimeout(function(){ 
 						that.setState({isLoading : false}); 
 						that.onPressRedirect("MyAccount");
@@ -168,9 +174,10 @@ export default class Login extends Component {
 					</TouchableOpacity>
 				</View>
 			</ScrollView>
-			<MKButton isLoading={this.state.isLoading} onPress={()=> this.getLogin()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
+			<MKButton onPress={()=> this.getLogin()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
 				LOGIN
 			</MKButton>
+       			<MKSpinner visible={this.state.isLoading} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} />
 		</View>
 		);
 	}

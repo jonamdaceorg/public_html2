@@ -15,6 +15,9 @@ import MyAccount from "./Templates/MyAccount";
 
 const SimpleApp = StackNavigator(
 {
+	Home: { 
+		screen: HomeScreen,
+	},
   	Login: {
 		screen: Login,
 		navigationOptions: ({ navigation }) => ({
@@ -28,9 +31,6 @@ const SimpleApp = StackNavigator(
 	},
 	MyAccount: { 
 		screen: MyAccount,
-	},
-	Home: { 
-		screen: HomeScreen,
 	},
 	Signup : {
 		screen: Signup,
