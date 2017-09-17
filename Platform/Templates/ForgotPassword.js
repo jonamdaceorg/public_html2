@@ -1,22 +1,25 @@
 'use strict';
 import React, {Component, PropTypes} from "react";
-import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, TouchableOpacity} from "react-native";
+import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, TouchableOpacity, AsyncStorage} from "react-native";
 
 import CommonStyle from "../Styles/CommonStyle";
 import MKButton from "../Component/MKButton";
 import MKTextInput from "../Component/MKTextInput";
+import { doPost } from "../Component/MKActions";
+import MKSpinner from "../Component/MKSpinner";
 
-export default class ForgotPassword extends Component {
+export default class Login extends Component {
 
   	constructor(props: Object) {
 		var {height, width} = Dimensions.get('window');
 	    	super(props);
 		this.state = {
 			isLoading : false,
+			isCancelable : true,
 			height : height,
 			width : width,
 			errorsJson:{
-				inputMobileNumber : null						
+				inputMobileNumber : null
 			},
 			inputMobileNumber : ''
 		};
@@ -45,7 +48,7 @@ export default class ForgotPassword extends Component {
 
 	}
 
-	async resetPassword(){
+	async confirmUserAndSendOtp(){
 		var that = this;
 		var inputMobileNumberValue = that.state.inputMobileNumber;
 		var isValid = 1;
@@ -68,9 +71,38 @@ export default class ForgotPassword extends Component {
 		});
 		await that.updateMyState(errorsJson, 'errorsJson');
 		if(isValid == 1){
-				this.setState({isLoading : true});
+			var postJson = new FormData();
+			postJson.append("mobileNumber", that.state.inputMobileNumber);
+			var subUrl = "confirmUserAndSendOtpFromApps";
+			that.setState({isLoading : true});
+			var response = await doPost(subUrl, postJson);
+			if(response != null){				
+				/*var active = response['active'];
+				if(active!=null && (active == "active" ||  active == "InActive")){
+					var userid = response['userid']; var userCode = response['userCode']; var name = response['name'];
+					var lastlogin = response['lastlogin']; var img = response['img'];
+					await AsyncStorage.setItem('userid', userid); await AsyncStorage.setItem('userCode', userCode);
+					await AsyncStorage.setItem('active', active); await AsyncStorage.setItem('name', name);
+					await AsyncStorage.setItem('lastlogin', lastlogin); await AsyncStorage.setItem('img', img);
 
-				this.setState({isLoading : false});
+					await AsyncStorage.setItem('username', that.state.inputMobileNumber);
+
+					setTimeout(function(){ 
+						that.setState({isLoading : false}); 
+						that.onPressRedirect("MyAccount");
+					}, 1000);
+				} else if(active == "InActive"){
+					setTimeout(function(){ 
+						that.setState({isLoading : false}); 
+						alert("Your Profile was not activated!");
+					}, 1000);
+				} else {
+					setTimeout(function(){ 
+						that.setState({isLoading : false}); 
+						alert("Username/Password is incorrect");
+					}, 1000);
+				}*/
+			}
 		}
 	}
 
@@ -112,8 +144,8 @@ export default class ForgotPassword extends Component {
 						onChangeText={(inputMobileNumber) => this.updateMyState(inputMobileNumber, 'inputMobileNumber')}
 						value = {this.state.inputMobileNumber}
 						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-						keyboardType={'numeric'} maxLength={10} returnKeyType={'next'} ref="inputMobileNumber" 
-						onSubmitEditing={(event) => this.resetPassword()}
+						keyboardType={'numeric'} maxLength={10} returnKeyType={'go'} ref="inputMobileNumber" 
+						onSubmitEditing={(event) => this.confirmUserAndSendOtp()}
 						onFocus={()=>this.onFocus()}
 						/>
 						{ inputMobileNumberError }
@@ -121,9 +153,10 @@ export default class ForgotPassword extends Component {
 					<View style={{paddingTop: 30}}></View>
 				</View>
 			</ScrollView>
-			<MKButton isLoading={this.state.isLoading} onPress={()=> this.resetPassword()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
-				RESET PASSWORD
+			<MKButton onPress={()=> this.confirmUserAndSendOtp()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
+				SEND OTP
 			</MKButton>
+       			<MKSpinner visible={this.state.isLoading} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} />
 		</View>
 		);
 	}

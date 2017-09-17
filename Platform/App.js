@@ -15,6 +15,18 @@ import MyAccount from "./Templates/MyAccount";
 
 const SimpleApp = StackNavigator(
 {
+	ForgotPassword: { 
+		screen: ForgotPassword,
+		navigationOptions: ({ navigation }) => ({
+			tabBarLabel: 'Three',
+			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+			title: 'Forgot Password',
+			headerStyle: { backgroundColor: 'orange' },
+			headerTintColor: '#fff',
+			//headerRight: <Text navigation={navigation} >test</Text>
+		})
+
+	},
 	Home: { 
 		screen: HomeScreen,
 	},
