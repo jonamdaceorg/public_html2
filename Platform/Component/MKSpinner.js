@@ -90,6 +90,7 @@ export default class MKSpinner extends React.Component {
 
   close() {
     this.setState({ visible: false });
+	this.props.updateParentState({ isLoading: false });
   }
 
   componentWillReceiveProps(nextProps) {

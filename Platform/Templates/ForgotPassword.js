@@ -121,6 +121,10 @@ export default class Login extends Component {
 		this.navigate(routes);
 	}
 
+ updateState (data) {
+        this.setState(data);
+    }
+
 	render() { 
 		var inputWidth = this.state.width-30;
 		var layoutWidth = this.state.width;
@@ -156,7 +160,7 @@ export default class Login extends Component {
 			<MKButton onPress={()=> this.confirmUserAndSendOtp()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
 				SEND OTP
 			</MKButton>
-       			<MKSpinner visible={this.state.isLoading} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} />
+       			<MKSpinner visible={this.state.isLoading} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} updateParentState={this.updateState.bind(this)}/>
 		</View>
 		);
 	}
