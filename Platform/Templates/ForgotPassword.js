@@ -21,7 +21,10 @@ export default class Login extends Component {
 			errorsJson:{
 				inputMobileNumber : null
 			},
-			inputMobileNumber : ''
+			inputMobileNumber : '8344798628',
+			otpStatus : 0,
+			otpMessage: '',
+			otpText : ''
 		};
 		this.navigate=this.props.navigation.navigate;
 		this.onFocus = this.onFocus.bind(this);
@@ -77,31 +80,14 @@ export default class Login extends Component {
 			that.setState({isLoading : true});
 			var response = await doPost(subUrl, postJson);
 			if(response != null){				
-				/*var active = response['active'];
-				if(active!=null && (active == "active" ||  active == "InActive")){
-					var userid = response['userid']; var userCode = response['userCode']; var name = response['name'];
-					var lastlogin = response['lastlogin']; var img = response['img'];
-					await AsyncStorage.setItem('userid', userid); await AsyncStorage.setItem('userCode', userCode);
-					await AsyncStorage.setItem('active', active); await AsyncStorage.setItem('name', name);
-					await AsyncStorage.setItem('lastlogin', lastlogin); await AsyncStorage.setItem('img', img);
 
-					await AsyncStorage.setItem('username', that.state.inputMobileNumber);
-
-					setTimeout(function(){ 
-						that.setState({isLoading : false}); 
-						that.onPressRedirect("MyAccount");
-					}, 1000);
-				} else if(active == "InActive"){
-					setTimeout(function(){ 
-						that.setState({isLoading : false}); 
-						alert("Your Profile was not activated!");
-					}, 1000);
-				} else {
-					setTimeout(function(){ 
-						that.setState({isLoading : false}); 
-						alert("Username/Password is incorrect");
-					}, 1000);
-				}*/
+				that.setState({
+					otpStatus : response['status'],
+					otpMessage: response['message'],
+					otpText : response['otp']
+				});
+				that.setState({isLoading : false}); 
+				//alert(that.state.otpStatus + "" + that.state.otpText);				
 			}
 		}
 	}
@@ -121,9 +107,9 @@ export default class Login extends Component {
 		this.navigate(routes);
 	}
 
- updateState (data) {
-        this.setState(data);
-    }
+	updateState (data) {
+	        this.setState(data);
+    	}
 
 	render() { 
 		var inputWidth = this.state.width-30;
@@ -137,8 +123,42 @@ export default class Login extends Component {
 		if(this.state.errorsJson.inputMobileNumber != null){
 			inputMobileNumberError = <Text style={CommonStyle.errorText}>{this.state.errorsJson.inputMobileNumber}</Text>;
 		}
-		//Error Block Code end
 
+		var inputOtpError = null;
+		if(this.state.errorsJson.inputOtp != null){
+			inputOtpError = <Text style={CommonStyle.errorText}>{this.state.errorsJson.inputOtp}</Text>;
+		}
+
+		//Error Block Code end
+		var editableMobile = true;
+		var otpContent = null;
+		var dynamicBtn = <MKButton onPress={()=> this.confirmUserAndSendOtp()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
+				SEND OTP
+			</MKButton>;
+
+		if(this.state.otpStatus == '1' ){
+			editableMobile = false;
+
+			otpContent = <View>
+					<MKTextInput label={'OTP'} highlightColor={inputHighlightColor}
+						onChangeText={(inputOtp) => this.updateMyState(inputOtp, 'inputOtp')}
+						value = {this.state.inputOtp}
+						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+						keyboardType={'numeric'} maxLength={6} returnKeyType={'go'} ref="inputOtp" 
+						onSubmitEditing={(event) => this.confirmUserAndSendOtp()}
+						onFocus={()=>this.onFocus()}
+						/>
+						{ inputOtpError }
+
+					<View style={{paddingTop: 30}}></View>
+					<Text style={[CommonStyle.errorText, {textAlign : 'right', textDecorationLine: 'underline'}]} onPress={()=> this.confirmUserAndSendOtp()}>Re-Send OTP?</Text>
+					</View>;
+			dynamicBtn = <MKButton onPress={()=> this.confirmUserAndSendOtp()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
+				VERIFY OTP
+			</MKButton>;
+		} else if(this.state.otpStatus == '2' ){
+			otpContent = <Text style={CommonStyle.errorText}>{this.state.otpMessage}</Text>;
+		}
 		return (
 		<View style={[{height : this.state.height, flex: 1, width : layoutWidth}]} onLayout={()=> this.updateLayout()}>
 			<ScrollView >
@@ -151,15 +171,15 @@ export default class Login extends Component {
 						keyboardType={'numeric'} maxLength={10} returnKeyType={'go'} ref="inputMobileNumber" 
 						onSubmitEditing={(event) => this.confirmUserAndSendOtp()}
 						onFocus={()=>this.onFocus()}
+						editable={editableMobile}
 						/>
 						{ inputMobileNumberError }
 
 					<View style={{paddingTop: 30}}></View>
+					{otpContent}
 				</View>
 			</ScrollView>
-			<MKButton onPress={()=> this.confirmUserAndSendOtp()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
-				SEND OTP
-			</MKButton>
+			{dynamicBtn}
        			<MKSpinner visible={this.state.isLoading} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} updateParentState={this.updateState.bind(this)}/>
 		</View>
 		);
