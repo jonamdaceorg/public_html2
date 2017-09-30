@@ -21,8 +21,16 @@ export default class Login extends Component {
 			errorsJson:{
 				inputMobileNumber : null
 			},
-			inputMobileNumber : '8344798628',
-			otpStatus : 0,
+			errorsJsonOtp :{
+				inputOtp : null
+			},
+			errorsJsonPassword :{
+				inputPassword : null,
+				inputConfirmPassword : null
+			},
+			inputMobileNumber : '',
+			inputOtp: '',
+			otpStatus : '0',
 			otpMessage: '',
 			otpText : ''
 		};
@@ -35,7 +43,7 @@ export default class Login extends Component {
 		this.refs[nextField].focus(); 
 	}
 
-	onFocus() {
+	async onFocus() {
 		let errorsJson = this.state.errorsJson; 
 		var that = this;
 		for (let name in errorsJson) {
@@ -44,11 +52,100 @@ export default class Login extends Component {
 				errorsJson[name] = null;
 			}
 		}
-		that.updateMyState(errorsJson, 'errorsJson');
+		await that.updateMyState(errorsJson, 'errorsJson');
+		if(that.state.otpStatus == 2){
+			await that.updateMyState('0', 'otpStatus');
+		}
+
 	}
 
-	componentDidMount() {
+	onFocusOtp() {
+		let errorsJsonOtp = this.state.errorsJsonOtp; 
+		var that = this;
+		for (let name in errorsJsonOtp) {
+			let ref = this.refs[name];
+			if (ref && ref.isFocused()) {
+				errorsJsonOtp[name] = null;
+			}
+		}
+		that.updateMyState(errorsJsonOtp, 'errorsJsonOtp');
+	}
 
+	onFocusPassword() {
+		let errorsJsonPassword = this.state.errorsJsonPassword; 
+		var that = this;
+		for (let name in errorsJsonPassword) {
+			let ref = this.refs[name];
+			if (ref && ref.isFocused()) {
+				errorsJsonPassword[name] = null;
+			}
+		}
+		that.updateMyState(errorsJsonPassword, 'errorsJsonPassword');
+	}
+
+
+	async componentDidMount() {
+	
+	}
+
+	async verifyUserAndOtp(){
+
+		var that = this;
+		var inputOtp = that.state.inputOtp;
+		var isValid = 1;
+		var stateArray = that.state;
+		var errorsJsonOtp = that.state.errorsJsonOtp;
+		var key = 'inputOtp';
+		var stateArrayValue = stateArray[key];
+
+		if(stateArrayValue == null || stateArrayValue==""){
+			errorsJsonOtp[key] = "This OTP is required";
+			isValid = 0;
+		}  else if(stateArrayValue.length != 6){
+			errorsJsonOtp[key] = "Length should not be less than 6";
+			isValid = 0;
+		} else if(isNaN(stateArrayValue) || stateArrayValue != this.state.otpText){
+			errorsJsonOtp[key] = "Invalid OTP";
+			isValid = 0;
+		} else {
+			errorsJsonOtp[key] = null;
+		}
+
+		await that.updateMyState(errorsJsonOtp, 'errorsJsonOtp');
+		if(isValid == 1){
+			that.setState({isLoading : true});
+			await that.updateMyState('3', 'otpStatus');
+			setTimeout(function(){
+				that.setState({isLoading : false});
+			}, 200);
+		}
+	}
+
+	async setPassword(){
+		var that = this;
+		var isValid = 1;
+		var stateArray = that.state;
+		var errorsJsonPassword = that.state.errorsJsonPassword;
+
+		Object.keys(errorsJsonPassword).forEach(function(key) {
+			var stateArrayValue = stateArray[key];
+			var stateInputPasswordValue = stateArray['inputPassword'];
+			if(stateArrayValue == null || stateArrayValue==""){
+				errorsJsonPassword[key] = "This field is required";
+				isValid = 0;
+			}  else if( key == 'inputConfirmPassword' && stateInputPasswordValue != stateArrayValue){
+				errorsJsonPassword[key] = "Password and Confirm Password";
+				isValid = 0;
+			} else {
+				errorsJsonPassword[key] = null;
+			}
+		});
+		await that.updateMyState(errorsJsonPassword, 'errorsJsonPassword');
+
+		if(isValid == 1){
+			//alert(JSON.stringify(errorsJsonPassword));
+			alert("updated success");
+		}
 	}
 
 	async confirmUserAndSendOtp(){
@@ -125,46 +222,27 @@ export default class Login extends Component {
 		}
 
 		var inputOtpError = null;
-		if(this.state.errorsJson.inputOtp != null){
-			inputOtpError = <Text style={CommonStyle.errorText}>{this.state.errorsJson.inputOtp}</Text>;
+		if(this.state.errorsJsonOtp.inputOtp != null){
+			inputOtpError = <Text style={CommonStyle.errorText}>{this.state.errorsJsonOtp.inputOtp}</Text>;
+		}
+
+		var inputPasswordError = null;
+		if(this.state.errorsJsonPassword.inputPassword != null){
+			inputPasswordError = <Text style={CommonStyle.errorText}>{this.state.errorsJsonPassword.inputPassword}</Text>;
+		}
+
+		var inputConfirmPasswordError = null;
+		if(this.state.errorsJsonPassword.inputConfirmPassword != null){
+			inputConfirmPasswordError = <Text style={CommonStyle.errorText}>{this.state.errorsJsonPassword.inputConfirmPassword}</Text>;
 		}
 
 		//Error Block Code end
 		var editableMobile = true;
-		var otpContent = null;
+		var responseMsg =null;
 		var dynamicBtn = <MKButton onPress={()=> this.confirmUserAndSendOtp()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
 				SEND OTP
 			</MKButton>;
-
-		if(this.state.otpStatus == '1' ){
-			editableMobile = false;
-
-			otpContent = <View>
-					<MKTextInput label={'OTP'} highlightColor={inputHighlightColor}
-						onChangeText={(inputOtp) => this.updateMyState(inputOtp, 'inputOtp')}
-						value = {this.state.inputOtp}
-						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-						keyboardType={'numeric'} maxLength={6} returnKeyType={'go'} ref="inputOtp" 
-						onSubmitEditing={(event) => this.confirmUserAndSendOtp()}
-						onFocus={()=>this.onFocus()}
-						/>
-						{ inputOtpError }
-
-					<View style={{paddingTop: 30}}></View>
-					<Text style={[CommonStyle.errorText, {textAlign : 'right', textDecorationLine: 'underline'}]} onPress={()=> this.confirmUserAndSendOtp()}>Re-Send OTP?</Text>
-					</View>;
-			dynamicBtn = <MKButton onPress={()=> this.confirmUserAndSendOtp()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
-				VERIFY OTP
-			</MKButton>;
-		} else if(this.state.otpStatus == '2' ){
-			otpContent = <Text style={CommonStyle.errorText}>{this.state.otpMessage}</Text>;
-		}
-		return (
-		<View style={[{height : this.state.height, flex: 1, width : layoutWidth}]} onLayout={()=> this.updateLayout()}>
-			<ScrollView >
-		      		<View style={{flex: 1, width:inputWidth, alignSelf:'center'}}>
-
-					<MKTextInput label={'Mobile Number'} highlightColor={inputHighlightColor}
+		var otpContent = <View><MKTextInput label={'Mobile Number'} highlightColor={inputHighlightColor}
 						onChangeText={(inputMobileNumber) => this.updateMyState(inputMobileNumber, 'inputMobileNumber')}
 						value = {this.state.inputMobileNumber}
 						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
@@ -175,12 +253,82 @@ export default class Login extends Component {
 						/>
 						{ inputMobileNumberError }
 
-					<View style={{paddingTop: 30}}></View>
+					<View style={{paddingTop: 10}}></View>
+				</View>;
+
+		if(this.state.otpStatus == '1'){
+			editableMobile = false;
+
+			otpContent = <View>
+					<Text style={CommonStyle.labelText}>OTP has been sent to your registered Mobile Number: {this.state.inputMobileNumber}</Text>
+					<MKTextInput label={'OTP'} highlightColor={inputHighlightColor}
+						onChangeText={(inputOtp) => this.updateMyState(inputOtp, 'inputOtp')}
+						value = {this.state.inputOtp}
+						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+						keyboardType={'numeric'} maxLength={6} returnKeyType={'go'} ref="inputOtp" 
+						onSubmitEditing={(event) => this.verifyUserAndOtp()}
+						onFocus={()=>this.onFocusOtp()}
+						/>
+						{ inputOtpError }
+
+					<View style={{paddingTop: 10}}></View>
+					<Text style={[CommonStyle.errorText, {textAlign : 'right', textDecorationLine: 'underline'}]} onPress={()=> this.confirmUserAndSendOtp()}>Re-Send OTP?</Text>
+					</View>;
+			dynamicBtn = <MKButton onPress={()=> this.verifyUserAndOtp()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
+				VERIFY OTP
+			</MKButton>;
+
+		} else if(this.state.otpStatus == '2' ){
+			responseMsg = <Text style={CommonStyle.errorText}>{this.state.otpMessage}</Text>;
+		} else if(this.state.otpStatus == '3' ){
+			otpContent = 	<View>
+					<Text style={CommonStyle.labelText}>Update your new password</Text>
+						<View style={{paddingTop: -30}}></View>
+						<MKTextInput label={'Password'} highlightColor={inputHighlightColor}
+							onChangeText={(inputPassword) => this.updateMyState(inputPassword, 'inputPassword')}
+							value = {this.state.inputPassword}
+							inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+							maxLength={6} returnKeyType={'next'} ref="inputPassword" 
+							onFocus={()=>this.onFocusPassword()}
+							onSubmitEditing={(event) => this.focusNextField('inputConfirmPassword')}
+							/>
+							{ inputPasswordError }
+
+						<View style={{paddingTop: 10}}></View>
+						<MKTextInput label={'Confirm Password'} highlightColor={inputHighlightColor}
+							onChangeText={(inputConfirmPassword) => this.updateMyState(inputConfirmPassword, 'inputConfirmPassword')}
+							value = {this.state.inputConfirmPassword}
+							inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+							maxLength={6} returnKeyType={'go'} ref="inputConfirmPassword" 
+							onFocus={()=>this.onFocusPassword()}
+							onSubmitEditing={(event) => this.setPassword()}
+							/>
+							{ inputConfirmPasswordError }
+
+						<View style={{paddingTop: 10}}></View>
+					</View>;
+			dynamicBtn = <MKButton onPress={()=> this.setPassword()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
+				SET PASSWORD
+			</MKButton>;
+		}
+
+		if(this.state.otpStatus == '0' ){
+		responseMsg = null;
+		}
+
+		return (
+		<View style={[{height : this.state.height, flex: 1, width : layoutWidth}]} onLayout={()=> this.updateLayout()}>
+			<ScrollView >
+		      		<View style={{flex: 1, width:inputWidth, alignSelf:'center'}}>				
 					{otpContent}
+					{responseMsg}
 				</View>
 			</ScrollView>
 			{dynamicBtn}
-       			<MKSpinner visible={this.state.isLoading} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} updateParentState={this.updateState.bind(this)}/>
+       			<MKSpinner visible={this.state.isLoading} 
+					cancelable={this.state.isCancelable} 
+					textStyle={{color: '#FFF'}} 
+					updateParentState={this.updateState.bind(this)}/>
 		</View>
 		);
 	}
