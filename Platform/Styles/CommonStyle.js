@@ -16,5 +16,10 @@ module.exports = StyleSheet.create({
 		fontSize: 13,
 		color: 'red',
 		paddingTop : 15
+	},
+	successText : {
+		fontSize: 13,
+		color: 'green',
+		paddingTop : 15
 	}
 });

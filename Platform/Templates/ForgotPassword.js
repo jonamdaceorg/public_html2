@@ -31,8 +31,11 @@ export default class Login extends Component {
 			inputMobileNumber : '',
 			inputOtp: '',
 			otpStatus : '0',
+			otpUserId : '0',
 			otpMessage: '',
-			otpText : ''
+			otpText : '',
+			inputPassword : '',
+			inputConfirmPassword : ''
 		};
 		this.navigate=this.props.navigation.navigate;
 		this.onFocus = this.onFocus.bind(this);
@@ -143,8 +146,36 @@ export default class Login extends Component {
 		await that.updateMyState(errorsJsonPassword, 'errorsJsonPassword');
 
 		if(isValid == 1){
-			//alert(JSON.stringify(errorsJsonPassword));
-			alert("updated success");
+			var otpUserId = that.state['otpUserId'];
+			if(otpUserId > 0){
+
+				var postJson = new FormData();
+				postJson.append("mobileNumber", that.state['inputMobileNumber']);
+				postJson.append("password", that.state['inputPassword']);
+				postJson.append("confirmPassword", that.state['inputConfirmPassword']);
+				postJson.append("otpText", that.state['inputOtp']);
+
+				var subUrl = "updateMyPasswordFromApps";
+				that.setState({isLoading : true});
+				var response = await doPost(subUrl, postJson);
+				if(response != null){				
+					//alert(JSON.stringify(response));
+					that.setState({
+						otpStatus : response['status'],
+						otpMessage: response['message'],
+						inputMobileNumber : '',
+						inputOtp: '',
+						otpUserId : '0',
+						otpText : '',
+						inputPassword : '',
+						inputConfirmPassword : ''
+					});
+					//that.setState({isLoading : false}); 	
+					setTimeout(function(){
+						that.setState({isLoading : false});
+					}, 200);
+				}
+			}
 		}
 	}
 
@@ -177,14 +208,15 @@ export default class Login extends Component {
 			that.setState({isLoading : true});
 			var response = await doPost(subUrl, postJson);
 			if(response != null){				
-
+				//alert(JSON.stringify(response));
 				that.setState({
 					otpStatus : response['status'],
 					otpMessage: response['message'],
+					otpUserId: response['otpUserId'],
 					otpText : response['otp']
 				});
 				that.setState({isLoading : false}); 
-				//alert(that.state.otpStatus + "" + that.state.otpText);				
+				//alert(that.state);				
 			}
 		}
 	}
@@ -313,7 +345,9 @@ export default class Login extends Component {
 		}
 
 		if(this.state.otpStatus == '0' ){
-		responseMsg = null;
+			responseMsg = null;
+		} else if(this.state.otpStatus == '4' ){
+			responseMsg = <Text style={CommonStyle.successText}>{this.state.otpMessage}</Text>;
 		}
 
 		return (
