@@ -94,7 +94,7 @@ export default class Login extends Component {
 
 					setTimeout(function(){ 
 						that.setState({isLoading : false}); 
-						that.onPressRedirect("MyAccount");
+						that.onPressRedirect("AdsCategoryMain");
 					}, 1000);
 				} else if(active == "InActive"){
 					setTimeout(function(){ 

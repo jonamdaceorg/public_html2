@@ -11,10 +11,24 @@ import Login from "./Templates/Login";
 import ForgotPassword from "./Templates/ForgotPassword";
 import HomeScreen from "./Templates/HomeScreen";
 import Signup from "./Templates/Signup";
-import MyAccount from "./Templates/MyAccount";
+import AdsCategoryMain from "./Templates/AdsCategoryMain";
 
 const SimpleApp = StackNavigator(
 {
+	Home: { 
+		screen: HomeScreen,
+	},
+	AdsCategoryMain: { 
+		screen: AdsCategoryMain,
+		navigationOptions: ({ navigation }) => ({
+			tabBarLabel: 'Three',
+			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+			title: 'Ads Category',
+			headerStyle: { backgroundColor: 'orange' },
+			headerTintColor: '#fff',
+			//headerRight: <Text navigation={navigation} >test</Text>
+		})
+	},
 	ForgotPassword: { 
 		screen: ForgotPassword,
 		navigationOptions: ({ navigation }) => ({
@@ -27,9 +41,6 @@ const SimpleApp = StackNavigator(
 		})
 
 	},
-	Home: { 
-		screen: HomeScreen,
-	},
   	Login: {
 		screen: Login,
 		navigationOptions: ({ navigation }) => ({
@@ -40,9 +51,6 @@ const SimpleApp = StackNavigator(
 			headerTintColor: '#fff',
 			//headerRight: <Text navigation={navigation} >test</Text>
 		})
-	},
-	MyAccount: { 
-		screen: MyAccount,
 	},
 	Signup : {
 		screen: Signup,
