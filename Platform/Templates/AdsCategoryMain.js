@@ -1,6 +1,7 @@
 'use strict';
 import React, {Component, PropTypes} from "react";
 import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, TouchableOpacity, Image, ListView, AsyncStorage} from "react-native";
+import Geocoder from 'react-native-geocoder';
 
 import CommonStyle from "../Styles/CommonStyle";
 import MKButton from "../Component/MKButton";
@@ -10,6 +11,8 @@ import CheckBox from 'react-native-icon-checkbox';
 
 import { doPost } from "../Component/MKActions";
 import MKSpinner from "../Component/MKSpinner";
+
+Geocoder.fallbackToGoogle("AIzaSyCbkW5l6iPkWb551pynfeBn3Lzb69_FFsY");
 
 export default class MyAccount extends Component {
 
@@ -26,6 +29,10 @@ export default class MyAccount extends Component {
 			width : width,
 			categoryJson : null,
 			ds:ds,
+			region: [],
+			latitude: null,
+			longitude: null,
+			userAddress : null,
 	    		listItems : ds.cloneWithRows([]),
 			colorArray : ['','#dd0908','#ff9e29','#3fb7d2','#dd0908','#c119ce', '#1963ce','#7fbad8', '#df8012', '#dd0908', '#070c1f', '#f49ecf', '#1ca39d']
 
@@ -42,10 +49,35 @@ export default class MyAccount extends Component {
 			that.updateMyState(that.state.ds.cloneWithRows(JSON.parse(categoryJson)), 'listItems');
 		}
 
-		navigator.geolocation.getCurrentPosition( (position) => { 
-			var initialPosition = JSON.stringify(position); 
-			alert({initialPosition}); 
-			}, (error) => alert(error.message), {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000} );
+		/*navigator.geolocation.getCurrentPosition( (position) => {
+			that.updateMyState(position, 'region');
+			}, (error) => alert(error.message),
+			{enableHighAccuracy: false, timeout: 20000, maximumAge: 1000}
+		);*/
+		this.watchID = navigator.geolocation.watchPosition( (position) => {
+					var lat = position.coords.latitude;
+					var lon = position.coords.longitude;
+
+					that.updateMyState(position, 'region');
+					that.updateMyState(lat, 'latitude');
+					that.updateMyState(lon, 'longitude');				
+
+					}, (error) => alert(error.message),
+					{enableHighAccuracy: false, timeout: 20000, maximumAge: 1000}
+				);
+	}
+
+	async getGeoLocation(){
+		var lat = this.state.latitude;
+		var lng = this.state.longitude;
+		if(lat != null && lng != null){
+			let userAddress = await Geocoder.geocodePosition({lat, lng});
+			this.updateMyState(userAddress, 'userAddress');
+		}
+	}
+
+	componentWillUnmount() {
+	    navigator.geolocation.clearWatch(this.watchID);
 	}
 
 	async getCategoryListFromApps(){
@@ -106,10 +138,15 @@ export default class MyAccount extends Component {
 		var inputWidth = this.state.width-30;
 		var layoutWidth = this.state.width;
 
+		if(this.state.latitude != null && this.state.latitude != null ){
+			this.getGeoLocation()
+		}
+
     		return ( 
 	<View style={[{height : this.state.height, flex: 1, width : layoutWidth, backgroundColor:'#59C2AF'}]} onLayout={()=> this.updateLayout()} >
 		<ScrollView style={{ flex: 1}}>
 			<ListView contentContainerStyle={styles.grid} dataSource={this.state.listItems} renderRow={(item) => this.renderGridItem(item, 300)} enableEmptySections={true}/>
+			<Text>{JSON.stringify(this.state.userAddress)}</Text>
 		</ScrollView>				
 	</View>
 		);

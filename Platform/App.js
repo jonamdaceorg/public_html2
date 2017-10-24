@@ -15,15 +15,26 @@ import AdsCategoryMain from "./Templates/AdsCategoryMain";
 
 const SimpleApp = StackNavigator(
 {
-	Home: { 
-		screen: HomeScreen,
-	},
 	AdsCategoryMain: { 
 		screen: AdsCategoryMain,
 		navigationOptions: ({ navigation }) => ({
 			tabBarLabel: 'Three',
 			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
-			title: 'Ads Category',
+			title: 'Category',
+			headerStyle: { backgroundColor: 'orange' },
+			headerTintColor: '#fff',
+			//headerRight: <Text navigation={navigation} >test</Text>
+		})
+	},
+	Home: { 
+		screen: HomeScreen,
+	},
+	Signup : {
+		screen: Signup,
+		navigationOptions: ({ navigation }) => ({
+			tabBarLabel: 'Three',
+			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+			title: 'Sign Up',
 			headerStyle: { backgroundColor: 'orange' },
 			headerTintColor: '#fff',
 			//headerRight: <Text navigation={navigation} >test</Text>
@@ -47,17 +58,6 @@ const SimpleApp = StackNavigator(
 			tabBarLabel: 'Three',
 			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
 			title: 'Login',
-			headerStyle: { backgroundColor: 'orange' },
-			headerTintColor: '#fff',
-			//headerRight: <Text navigation={navigation} >test</Text>
-		})
-	},
-	Signup : {
-		screen: Signup,
-		navigationOptions: ({ navigation }) => ({
-			tabBarLabel: 'Three',
-			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
-			title: 'Sign Up',
 			headerStyle: { backgroundColor: 'orange' },
 			headerTintColor: '#fff',
 			//headerRight: <Text navigation={navigation} >test</Text>
