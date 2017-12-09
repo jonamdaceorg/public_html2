@@ -125,9 +125,9 @@ export default class MyAccount extends Component {
 		if(icons != null)
 		icons = icons.replace("fa fa-", "");
 		return (
-		<View style={{ width: layoutWidth/3, height: layoutWidth/3+15, alignItems:'center', justifyContent:'center', marginTop : 15}}>
-			<View style={{flexDirection: 'row', backgroundColor: '#FFF', width: layoutWidth/3-20, height: layoutWidth/3-20, borderRadius: layoutWidth/2-20, alignItems:'center', justifyContent:'center'}}>
-				<Icon name={icons} color={color} size={layoutWidth/6} />
+		<View style={{ width: layoutWidth/3, height: layoutWidth/3+15, alignItems:'center', marginTop : 15}}>
+			<View style={{flexDirection: 'row', backgroundColor: '#FFF', borderRadius:10, width: 80, height: 80,  alignItems:'center', justifyContent:'center'}}>
+				<Icon name={icons} color={color} size={layoutWidth/8} />
 			</View>	
 			<Text style={{marginTop: 7, fontSize : 12, color: '#FFF', textAlign:'center'}}>{category}</Text>
 		</View>

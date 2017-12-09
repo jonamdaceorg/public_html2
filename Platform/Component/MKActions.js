@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-var serverUri = "http://192.168.43.156/public_html1/";
+var serverUri = "http://192.168.43.42/public_html1/";
 
 export async function doPost(subUrl, postJsonData){
 	var url = serverUri + subUrl;
