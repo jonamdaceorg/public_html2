@@ -1,6 +1,19 @@
 'use strict';
 import React, {Component, PropTypes} from "react";
-import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, TouchableOpacity, Image, ListView, AsyncStorage} from "react-native";
+import {
+	View, 
+	ToastAndroid, 
+	StyleSheet, 
+	Animated, 
+	Text, 
+	TextInput, 
+	ScrollView, 
+	Dimensions, 
+	TouchableOpacity, 
+	Image, 
+	ListView, 
+	AsyncStorage
+	} from "react-native";
 import Geocoder from 'react-native-geocoder';
 
 import CommonStyle from "../Styles/CommonStyle";
@@ -14,7 +27,7 @@ import MKSpinner from "../Component/MKSpinner";
 
 Geocoder.fallbackToGoogle("AIzaSyCbkW5l6iPkWb551pynfeBn3Lzb69_FFsY");
 
-export default class MyAccount extends Component {
+export default class CategoryListView extends Component {
 
 	//static navigationOptions = { title: 'Welcome', header: null };
   	constructor(props: Object) {
@@ -41,6 +54,9 @@ export default class MyAccount extends Component {
 	}
 
 	async componentDidMount() {
+
+		ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
+
 		var that = this;
  		const categoryJson = await AsyncStorage.getItem('categoryJson');
 		if(categoryJson == null){
@@ -114,6 +130,10 @@ export default class MyAccount extends Component {
 		this.navigate(routes);
 	}
 
+	onPress(){
+		alert("test");
+	}
+
 	renderGridItem(item, layoutWidth){
 		//var layoutWidth = this.state.width;
 		var categoryId = item.categoryId;
@@ -126,10 +146,13 @@ export default class MyAccount extends Component {
 		icons = icons.replace("fa fa-", "");
 		return (
 		<View style={{ width: layoutWidth/3, height: layoutWidth/3+15, alignItems:'center', marginTop : 15}}>
+       			<TouchableOpacity style={styles.button} onPress={this.onPress} >
 			<View style={{flexDirection: 'row', backgroundColor: '#FFF', borderRadius:10, width: 80, height: 80,  alignItems:'center', justifyContent:'center'}}>
 				<Icon name={icons} color={color} size={layoutWidth/8} />
 			</View>	
+			</TouchableOpacity>
 			<Text style={{marginTop: 7, fontSize : 12, color: '#FFF', textAlign:'center'}}>{category}</Text>
+
 		</View>
 		);
 	}
