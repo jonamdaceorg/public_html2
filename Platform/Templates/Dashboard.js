@@ -27,7 +27,7 @@ import MKSpinner from "../Component/MKSpinner";
 
 Geocoder.fallbackToGoogle("AIzaSyCbkW5l6iPkWb551pynfeBn3Lzb69_FFsY");
 
-export default class CategoryListView extends Component {
+export default class Dashboard extends Component {
 
 	//static navigationOptions = { title: 'Welcome', header: null };
   	constructor(props: Object) {
@@ -145,9 +145,9 @@ export default class CategoryListView extends Component {
 		if(icons != null)
 		icons = icons.replace("fa fa-", "");
 		return (
-		<View style={{ width: layoutWidth/3, height: layoutWidth/3+15, alignItems:'center', marginTop : 15}}>
+		<View style={{ width: layoutWidth/3, height: layoutWidth/3+15, alignItems:'center', marginTop : 5}}>
        			<TouchableOpacity style={styles.button} onPress={this.onPress} >
-			<View style={{flexDirection: 'row', backgroundColor: '#FFF', borderRadius:10, width: 80, height: 80,  alignItems:'center', justifyContent:'center'}}>
+			<View style={{flexDirection: 'row', backgroundColor: '#FFF', borderRadius:10, width: 70, height: 70,  alignItems:'center', justifyContent:'center'}}>
 				<Icon name={icons} color={color} size={layoutWidth/8} />
 			</View>	
 			</TouchableOpacity>
@@ -168,8 +168,18 @@ export default class CategoryListView extends Component {
     		return ( 
 	<View style={[{height : this.state.height, flex: 1, width : layoutWidth, backgroundColor:'#59C2AF'}]} onLayout={()=> this.updateLayout()} >
 		<ScrollView style={{ flex: 1}}>
+
+		<View style={{alignItems:'center', marginTop: 10, marginBottom: 10}}>
+			<View style={{width: layoutWidth-10, height: 50, borderRadius: 3, backgroundColor: '#FFF'}}>
+	       			<TouchableOpacity style={styles.button} onPress={()=>this.onPressRedirect('SearchHistory')} >
+					<View  style={{padding:15, flexDirection:'row'}}>
+						<Icon name='search' color='#a6a6a6' size={18}/>
+						<Text style= {{color:'#a6a6a6',fontSize:14, paddingLeft:15}}>Search Ads</Text>
+					</View>
+				</TouchableOpacity>
+			</View>
+		</View>
 			<ListView contentContainerStyle={styles.grid} dataSource={this.state.listItems} renderRow={(item) => this.renderGridItem(item, 300)} enableEmptySections={true}/>
-			<Text>{JSON.stringify(this.state.userAddress)}</Text>
 		</ScrollView>				
 	</View>
 		);

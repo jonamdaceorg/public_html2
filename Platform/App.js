@@ -5,16 +5,33 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { StackNavigator } from 'react-navigation';
 
 import Login from "./Templates/Login";
 import ForgotPassword from "./Templates/ForgotPassword";
 import HomeScreen from "./Templates/HomeScreen";
 import Signup from "./Templates/Signup";
-import CategoryListView from "./Templates/CategoryListView";
+import Dashboard from "./Templates/Dashboard";
+import SearchHistory from "./Templates/SearchHistory";
+
 
 const SimpleApp = StackNavigator(
 {
+	Dashboard: { 
+		screen: Dashboard,
+		navigationOptions: ({ navigation }) => ({
+			tabBarLabel: 'Three',
+			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+			title: 'Category',
+			headerStyle: { backgroundColor: 'orange' },
+			headerTintColor: '#fff',
+			//headerRight: <Text navigation={navigation} >test</Text>
+		})
+	},
+	SearchHistory: { 
+		screen: SearchHistory,
+	},
 	Home: { 
 		screen: HomeScreen,
 	},
@@ -64,18 +81,6 @@ const SimpleApp = StackNavigator(
 		})
 
 	},
-	CategoryListView: { 
-		screen: CategoryListView,
-		navigationOptions: ({ navigation }) => ({
-			tabBarLabel: 'Three',
-			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
-			title: 'Category',
-			headerStyle: { backgroundColor: 'orange' },
-			headerTintColor: '#fff',
-			//headerRight: <Text navigation={navigation} >test</Text>
-		})
-	},
-
 },
 { 
     headerMode: 'screen' 

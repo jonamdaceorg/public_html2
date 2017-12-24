@@ -53,7 +53,7 @@ export default class HomeScreen extends Component {
 
 					setTimeout(function(){ 
 						that.setState({isLoading : false}); 
-						that.onPressRedirect("AdsCategoryMain");
+						that.onPressRedirect("Dashboard");
 					}, 1000);
 				} else if(active == "InActive"){
 					setTimeout(function(){ 
