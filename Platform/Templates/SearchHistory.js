@@ -14,18 +14,10 @@ import {
 	ListView, 
 	AsyncStorage
 	} from "react-native";
-import Geocoder from 'react-native-geocoder';
 
 import CommonStyle from "../Styles/CommonStyle";
-import MKButton from "../Component/MKButton";
-import MKTextInput from "../Component/MKTextInput";
 import Icon from 'react-native-vector-icons/FontAwesome';
-import CheckBox from 'react-native-icon-checkbox';
-
-import { doPost } from "../Component/MKActions";
 import MKSpinner from "../Component/MKSpinner";
-
-Geocoder.fallbackToGoogle("AIzaSyCbkW5l6iPkWb551pynfeBn3Lzb69_FFsY");
 
 export default class Search extends Component {
 
@@ -38,6 +30,7 @@ export default class Search extends Component {
 			height : height,
 			width : width,
 			searchText: '',
+			searchTextList: [],
 			ds:ds,
 	    		listItems : ds.cloneWithRows([])
 		};
@@ -45,18 +38,22 @@ export default class Search extends Component {
 	}
 
 	async componentDidMount() {
-
-		ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
+		var that = this;
+ 		var searchTextList = await AsyncStorage.getItem('listItems');
+		if(searchTextList != null){
+			await that.updateMyState(that.state.ds.cloneWithRows(JSON.parse(searchTextList)), 'listItems');
+			await that.updateMyState(JSON.parse(searchTextList), 'searchTextList');
+		}
 	}
 
-	updateMyState(value, keyName){
-		this.setState({
+	async updateMyState(value, keyName){
+		await this.setState({
 			[keyName] : value
 		});
 	}
 
-	onPressRedirect(routes){
-		this.navigate(routes);
+	onPressRedirectToPassData(routes, searchData){
+		this.navigate(routes, { 'searchText' : searchData } );
 	}
 	
 	updateLayout(){
@@ -64,29 +61,76 @@ export default class Search extends Component {
 		this.setState({height : height, width : width});
 	}
 
-	onPressRedirect(routes){
+	onPressRedirectToGoBack(routes){
+    		this.props.navigation.goBack();
 		this.navigate(routes);
 	}
 
-	onPressSearch(){
-		alert("test"+this.state.searchText);
+	async onPressSearch(){
+		var searchText = this.state.searchText;
+		var listItems = null;
+		var that = this;
+		if(searchText.length>0){
+			listItems = await AsyncStorage.getItem('listItems');
+			if(listItems == null){
+				listItems = [];
+			} else {
+				listItems = JSON.parse(listItems);
+			}
+			listItems.push(searchText);
+
+			that.updateMyState(that.state.ds.cloneWithRows(listItems), 'listItems');
+ 			await AsyncStorage.setItem('listItems', JSON.stringify(listItems));
+			await that.updateMyState(listItems, 'searchTextList');
+		}
 	}
+
+	async onPressToClear(){
+		var listItems = [];
+		var that = this;
+		await AsyncStorage.removeItem('listItems');
+ 		await AsyncStorage.setItem('listItems', JSON.stringify(listItems));
+		that.updateMyState(that.state.ds.cloneWithRows([]), 'listItems');
+		await that.updateMyState([], 'searchTextList');
+
+	}
+
+	renderGridItem(item, layoutWidth){
+		return (
+
+		<View style={{alignItems:'center', marginTop: 5}}>
+			<View style={{width: layoutWidth, height: 50, borderRadius: 3, backgroundColor: '#FFF'}}>
+	       			<TouchableOpacity style={styles.button} onPress={()=>this.onPressRedirectToPassData('Search', item)} >
+					<View  style={{padding:15, flexDirection:'row'}}>
+						<Icon name='search' color='#a6a6a6' size={18}/>
+						<Text style= {{color:'#a6a6a6',fontSize:14, paddingLeft:15}}>{item}</Text>
+					</View>
+				</TouchableOpacity>
+			</View>
+		</View>
+		);
+	}
+
 
 	render() { 
 		var inputWidth = this.state.width-30;
 		var layoutWidth = this.state.width;
-
-		if(this.state.latitude != null && this.state.latitude != null ){
-			this.getGeoLocation()
+		var clearBtn = null;
+		if(this.state.searchTextList.length > 0){
+			clearBtn = <TouchableOpacity onPress={()=>this.onPressToClear()} >
+				<Text style={styles.textHeader}>
+					Clear
+				</Text>
+			</TouchableOpacity>;
 		}
-
+		
     		return ( 
 	<View style={[{height : this.state.height, flex: 1, width : layoutWidth, backgroundColor:'#59C2AF'}]} onLayout={()=> this.updateLayout()} >
 		<View style={{alignItems:'center'}}>
 			<View style={{width: layoutWidth, height: 60, borderRadius: 3, backgroundColor: 'orange' }}>
 
 					<View  style={{flexDirection:'row'}}>
-	       		<TouchableOpacity style={[styles.button, {marginVertical:15, width:60, alignItems:'center'}]} onPress={()=>this.onPressRedirect('Dashboard')} >
+	       		<TouchableOpacity style={[styles.button, {marginVertical:15, width:60, alignItems:'center'}]} onPress={()=>this.onPressRedirectToGoBack()} >
 							<Icon name='arrow-left' color='#FFF' size={18} style={{paddingTop:5}}/>
 			</TouchableOpacity>
 			<View style={{marginTop:10}}>
@@ -106,9 +150,17 @@ export default class Search extends Component {
 			</View>
 		</View>
 		<ScrollView style={{ flex: 1}}>
-			<Text>
-				eee
-			</Text>
+			<View style={{flexDirection: 'row'}}>
+				<Text style={[styles.textHeader, {width : layoutWidth - 80}]}>
+					Recent Searches
+				</Text>
+			{ clearBtn }
+			</View>
+			<ListView contentContainerStyle={styles.grid} 
+				dataSource={this.state.listItems} 
+				renderRow={(item) => this.renderGridItem(item, layoutWidth)} 
+				enableEmptySections={true}/>
+
 		</ScrollView>				
 	</View>
 		);
@@ -120,6 +172,23 @@ export default class Search extends Component {
 
 
 const styles = StyleSheet.create({
+	textHeader: {
+		fontSize:16,
+		padding: 10,
+		paddingTop: 20,
+		paddingLeft: 20,
+		textAlign:'left',
+		color: '#FFF'
+	},
+	textRow: {
+		fontSize:16,
+		padding: 10,
+		height: 40,
+		backgroundColor:'#FFF',
+		color: '#a6a6a6',
+		paddingLeft: 20,
+		textAlign:'left'
+	},
     grid: {
         justifyContent: 'center',
         flexDirection: 'row',
