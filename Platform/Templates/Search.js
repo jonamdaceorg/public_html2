@@ -62,11 +62,13 @@ export default class Search extends Component {
 		var layoutWidth = this.state.width;
     		return ( 
 <View style={[{height : this.state.height, flex: 1, width : layoutWidth, backgroundColor:'#59C2AF'}]} onLayout={()=> this.updateLayout()} >
+			<ScrollView >
 	<Text>
 		{this.state.searchText}
 	</Text>
-	<SearchAdsContent />
+	<SearchAdsContent imgWidth={this.state.width-50} imgHeight={150} />
 <MKSpinner visible={this.state.isLoading} textContent={"Please wait"} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} />
+			</ScrollView >
 </View>
 		);
 	}
