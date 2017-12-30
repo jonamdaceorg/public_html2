@@ -1,4 +1,7 @@
-import {StyleSheet} from "react-native";
+import {StyleSheet, Platform} from "react-native";
+import normalize from '../Component/helpers/normalizeText';
+import fonts from '../Component/config/fonts';
+import colors from '../Component/config/colors';
 
 module.exports = StyleSheet.create({
   	labelText: {
@@ -21,5 +24,48 @@ module.exports = StyleSheet.create({
 		fontSize: 13,
 		color: 'green',
 		paddingTop : 15
-	}
+	},
+	cardTitle: {
+		fontSize: normalize(14),
+		...Platform.select({
+			ios: {
+				fontWeight: 'bold',
+			},
+			android: {
+				...fonts.android.black,
+			},
+		}),
+		textAlign: 'center',
+		marginBottom: 15,
+		color: colors.grey1,
+	},
+	pricingTitle: {
+		textAlign: 'center',
+		color: colors.primary,
+		fontSize: normalize(30),
+		...Platform.select({
+		ios: {
+			fontWeight: '800',
+		},
+		android: {
+			...fonts.android.black,
+		},
+		}),
+	},
+	cardInnerTitle: {
+		textAlign: 'center',
+		color: colors.primary,
+		fontSize: normalize(20),
+		...Platform.select({
+		ios: {
+			fontWeight: '800',
+		},
+		android: {
+			...fonts.android.black,
+		},
+		}),
+	},
+	imageCardTitle: {
+		marginTop: 15,
+	},
 });

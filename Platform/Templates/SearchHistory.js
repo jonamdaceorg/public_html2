@@ -82,6 +82,7 @@ export default class Search extends Component {
 			that.updateMyState(that.state.ds.cloneWithRows(listItems), 'listItems');
  			await AsyncStorage.setItem('listItems', JSON.stringify(listItems));
 			await that.updateMyState(listItems, 'searchTextList');
+			await this.onPressRedirectToPassData('Search', searchText);
 		}
 	}
 

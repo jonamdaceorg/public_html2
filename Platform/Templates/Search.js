@@ -16,6 +16,8 @@ import {
 	} from "react-native";
 
 import MKSpinner from "../Component/MKSpinner";
+import SearchAdsContent from "./SearchAdsContent";
+
 export default class Search extends Component {
 
   	constructor(props: Object) {
@@ -35,11 +37,10 @@ export default class Search extends Component {
 		if(that.props.navigation.state.params != null){
 			var searchText = this.props.navigation.state.params['searchText'];
 			that.updateMyState(searchText, 'searchText');
-
-			setTimeout(function(){ 
-				that.updateMyState(false, 'isLoading');
-			}, 1000);
 		}
+		setTimeout(function(){ 
+			that.updateMyState(false, 'isLoading');
+		}, 1000);
 	}
 
 	updateMyState(value, keyName){
@@ -64,6 +65,7 @@ export default class Search extends Component {
 	<Text>
 		{this.state.searchText}
 	</Text>
+	<SearchAdsContent />
 <MKSpinner visible={this.state.isLoading} textContent={"Please wait"} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} />
 </View>
 		);
