@@ -12,7 +12,6 @@ import {
 import MKSpinner from "../Component/MKSpinner";
 import MKCard from "../Component/MKCard";
 import Divider from '../Component/divider/Divider';
-var banner = require('../images/1stepshop-1.jpg');
 import CommonStyle from "../Styles/CommonStyle";
 export default class SearchAdsContent extends Component {
 
@@ -24,29 +23,32 @@ export default class SearchAdsContent extends Component {
 		
 	}
 
-	onPressToShowSingleAds(adsId){
-		this.props.navigation.navigate('AdsView', { 'adsId' : adsId });
+	onPressToShowSingleAds(postJson){
+		this.props.navigation.navigate('AdsView', postJson);
 	}
 
 	render() { 
 
 		var adsTitle = this.props.postJson.adsTitle;
+		var adsCode = this.props.postJson.adsCode;
 		var adsId = this.props.postJson.adsId;
-		var adsAmt = this.props.postJson.adsAmt;
-		var adsLocation = this.props.postJson.adsLocation;
-		var postedDate = this.props.postJson.postedDate;
+		var adsAmt = this.props.postJson.offerPrice;
+		var adsLocation = this.props.postJson.state +', '+ this.props.postJson.city;
+		var postedDate = this.props.postJson.createdAt;
+		var adsImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg==';
 
 
     		return ( 
 			<MKCard>
-			<Image source={banner} style={{width: this.props.imgWidth, height: this.props.imgHeight, resizeMode: Image.resizeMode.contain, alignSelf:'center'}} />
+			<Image source={{uri: adsImage}} style={{width: this.props.imgWidth, height: this.props.imgHeight, resizeMode: Image.resizeMode.contain, alignSelf:'center'}} />
 			<Divider style={CommonStyle.divider} />
 			<Text style={[ CommonStyle.imageCardTitle,{fontWeight:'bold'}]}>{adsTitle}</Text>
 			<Text style={[ CommonStyle.imageCardTitle]}>{adsLocation} | {postedDate} </Text>
 			<View style={{flexDirection:'row'}}>
 <Text style={[ CommonStyle.imageCardTitle, {width: 80, textAlign:'left', fontWeight:'bold', color:'#F9CE0D'}]}>₹{adsAmt}</Text>
-<TouchableOpacity onPress={()=> this.onPressToShowSingleAds(adsId)}>
-<Text style={[ CommonStyle.imageCardTitle, {width: this.props.imgWidth-100,textAlign:'right', color:'#489FDF'}]} >View More Details »
+<TouchableOpacity onPress={()=> this.onPressToShowSingleAds(this.props.postJson)}>
+<Text style={[ CommonStyle.imageCardTitle, {width: this.props.imgWidth-100,textAlign:'right', color:'#489FDF'}]} >
+View More Details »
 </Text>
 </TouchableOpacity>
 </View>
