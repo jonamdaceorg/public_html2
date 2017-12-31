@@ -15,7 +15,8 @@ import Signup from "./Templates/Signup";
 import Dashboard from "./Templates/Dashboard";
 import SearchHistory from "./Templates/SearchHistory";
 import Search from "./Templates/Search";
-
+import AdsView from "./Templates/AdsView";
+import SearchAdsContent from "./Templates/SearchAdsContent";
 
 const SimpleApp = StackNavigator(
 {
@@ -43,6 +44,20 @@ const SimpleApp = StackNavigator(
 	},
 	SearchHistory: { 
 		screen: SearchHistory,
+	},
+	AdsView: { 
+		screen: AdsView,
+		navigationOptions: ({ navigation }) => ({
+			tabBarLabel: 'Three',
+			tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+			title: 'Ads Details',
+			headerStyle: { backgroundColor: 'orange' },
+			headerTintColor: '#fff',
+			//headerRight: <Text navigation={navigation} >test</Text>
+		})
+	},
+	SearchAdsContent: { 
+		screen: SearchAdsContent,
 	},
 	Home: { 
 		screen: HomeScreen,
