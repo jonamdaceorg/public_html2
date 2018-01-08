@@ -15,9 +15,11 @@ import MKSpinner from "../Component/MKSpinner";
 import MKCard from "../Component/MKCard";
 import Divider from '../Component/divider/Divider';
 import colors from '../Component/config/colors';
+import ConfigVariable from '../Component/config/ConfigVariable';
 var banner = require('../images/1stepshop-1.jpg');
 import CommonStyle from "../Styles/CommonStyle";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { doPost } from "../Component/MKActions";
 
 import Swiper from 'react-native-swiper';
 var {height, width} = Dimensions.get('window');
@@ -77,7 +79,22 @@ export default class AdsView extends Component {
 
 
 	async componentDidMount() {
-	        var singleAdsJson = this.props.navigation.state.params;
+	        var paramsData = this.props.navigation.state.params;
+		var singleAdsJson = null;
+		var that = this;
+		if(paramsData != null){
+			var adsId = paramsData['adsId'];
+			var postJson = new FormData();
+			postJson.append("rf", "json");
+			var subUrl = "singleItem/"+adsId;
+			//that.updateMyState(true, 'isLoading');
+			var response = await doPost(subUrl, postJson);
+			if(response != null){
+				singleAdsJson = response['adsDetails']
+			}
+			alert(JSON.stringify(response));
+		}
+
 		this.setState({singleAdsJson : singleAdsJson});
 	}
 
@@ -100,8 +117,12 @@ export default class AdsView extends Component {
 	render() { 
 		var deviceWidth = this.state.width;
 
-		var singleAdsJson = this.state.singleAdsJson;
+		var adsJson = this.state.singleAdsJson;
 		var descContent = null;
+		var fileName = null;
+		var fileImage = null;
+		if(adsJson != null){
+			var singleAdsJson = adsJson[0];
 		descContent = <View>
 			<View style={[CommonStyle.adsViewRow]}>
 				<Text style={[CommonStyle.adsViewHeader]}>
@@ -168,6 +189,22 @@ export default class AdsView extends Component {
 				</Text>
 			</View>
 		</View>;
+			fileName = singleAdsJson['file_name'];
+
+		}
+		var filePath = ConfigVariable.uploadedAdsFilePathEmpty;
+		if(fileName != null){
+			filePath = ConfigVariable.uploadedAdsFilePath + '/' + singleAdsJson['userCode'] + '/' + singleAdsJson['adsCode'] + '/' + fileName;
+			fileImage = <Image source={{uri: filePath }} >
+<View style={[styles.slide1]}>
+		</View>
+</Image>
+		} else {
+			fileImage = <Image source={{uri: filePath }} >
+		<View style={[styles.slide1]}>
+		</View>
+</Image>
+		}
 /*
 		if(singleAdsJson != null){
 			descContent = Object.keys(singleAdsJson).map((key)=> {
@@ -195,10 +232,8 @@ export default class AdsView extends Component {
 </TouchableOpacity>
 
 <TouchableOpacity onPress={()=>this.onPressRedirectToPassData('AdsGallery', {data: 'hh'})}>
-<Image source={{uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg=='}}>
-		<View style={[styles.slide1]}>
-		</View>
-</Image>
+{fileImage}
+		
 </TouchableOpacity>
 
 <View style={[styles.button, {top: 210, left: 0, position:'absolute', width:60, alignItems:'center'}]} >

@@ -12,6 +12,7 @@ import {
 import MKSpinner from "../Component/MKSpinner";
 import MKCard from "../Component/MKCard";
 import Divider from '../Component/divider/Divider';
+import ConfigVariable from '../Component/config/ConfigVariable';
 import CommonStyle from "../Styles/CommonStyle";
 export default class SearchAdsContent extends Component {
 
@@ -31,16 +32,24 @@ export default class SearchAdsContent extends Component {
 
 		var adsTitle = this.props.postJson.adsTitle;
 		var adsCode = this.props.postJson.adsCode;
+		var userCode = this.props.postJson.userCode;
 		var adsId = this.props.postJson.adsId;
 		var adsAmt = this.props.postJson.offerPrice;
 		var adsLocation = this.props.postJson.state +', '+ this.props.postJson.city;
 		var postedDate = this.props.postJson.createdAt;
+		var fileName = this.props.postJson.file_name;
 		var adsImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg==';
+		var filePath = ConfigVariable.uploadedAdsFilePathEmpty;
+var fileImage = <Image source={{uri: filePath}} style={{width: this.props.imgWidth, height: this.props.imgHeight, resizeMode: Image.resizeMode.contain, alignSelf:'center'}} />
+if(fileName != null){
+			filePath = ConfigVariable.uploadedAdsFilePath + '/' + userCode + '/' + adsCode + '/' + fileName;
+			fileImage = <Image source={{uri: filePath}} style={{width: this.props.imgWidth, height: this.props.imgHeight, resizeMode: Image.resizeMode.contain, alignSelf:'center'}} />
 
+		} 
 
     		return ( 
 			<MKCard>
-			<Image source={{uri: adsImage}} style={{width: this.props.imgWidth, height: this.props.imgHeight, resizeMode: Image.resizeMode.contain, alignSelf:'center'}} />
+			{fileImage}
 			<Divider style={CommonStyle.divider} />
 			<Text style={[ CommonStyle.imageCardTitle,{fontWeight:'bold'}]}>{adsTitle}</Text>
 			<Text style={[ CommonStyle.imageCardTitle]}>{adsLocation} | {postedDate} </Text>
