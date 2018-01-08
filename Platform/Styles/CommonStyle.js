@@ -1,7 +1,12 @@
-import {StyleSheet, Platform} from "react-native";
+import {StyleSheet, Platform, Dimensions} from "react-native";
 import normalize from '../Component/helpers/normalizeText';
 import fonts from '../Component/config/fonts';
 import colors from '../Component/config/colors';
+
+
+const deviceHeight = Dimensions.get('window').height;
+const deviceWidth = Dimensions.get('window').width;
+
 
 module.exports = StyleSheet.create({
   	labelText: {
@@ -9,6 +14,29 @@ module.exports = StyleSheet.create({
     		color : '#2B8CB9',
 		fontSize : 13,
 		paddingTop : 15
+	},
+	adsViewRow:{
+		flexDirection: 'row'
+	},
+	adsViewHeader:{
+ 		flexDirection : 'row', 
+		backgroundColor: '#59C2AF', 
+		minHeight:40, 
+		justifyContent:'center', 
+		textAlign:'right', 
+		fontSize: 14, 
+		paddingTop:10, 
+		paddingRight:10,
+		fontWeight:'bold',
+		width: 100
+	},
+	adsViewText:{
+ 		flexDirection : 'row', 
+		backgroundColor: '#FFF', 
+		minHeight:50, 
+		padding: 10, 
+		color: colors.primary,
+		alignItems:'center',
 	},
 	textInput :{
 		fontSize: 16,

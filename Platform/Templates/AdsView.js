@@ -14,6 +14,7 @@ import {
 import MKSpinner from "../Component/MKSpinner";
 import MKCard from "../Component/MKCard";
 import Divider from '../Component/divider/Divider';
+import colors from '../Component/config/colors';
 var banner = require('../images/1stepshop-1.jpg');
 import CommonStyle from "../Styles/CommonStyle";
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -60,17 +61,24 @@ export default class AdsView extends Component {
 			isLoading : false,
 			height : height,
 			width : width,
+			singleAdsJson : {}
 		};
 		this.navigate=this.props.navigation.navigate;
 	}
 
 	updateLayout(){
+
 		var {height, width} = Dimensions.get('window');
 		this.setState({height : height, width : width});
+
+
 	}
 
-	async componentDidMount() {
 
+
+	async componentDidMount() {
+	        var singleAdsJson = this.props.navigation.state.params;
+		this.setState({singleAdsJson : singleAdsJson});
 	}
 
 	updateMyState(value, keyName){
@@ -90,9 +98,95 @@ export default class AdsView extends Component {
 	}
 
 	render() { 
-		var layoutWidth = this.state.width;
+		var deviceWidth = this.state.width;
+
+		var singleAdsJson = this.state.singleAdsJson;
+		var descContent = null;
+		descContent = <View>
+			<View style={[CommonStyle.adsViewRow]}>
+				<Text style={[CommonStyle.adsViewHeader]}>
+					Ads Code
+				</Text>
+				<Text style={[CommonStyle.adsViewText, { width: deviceWidth-100 }]}>
+					{singleAdsJson['adsCode']}
+				</Text>
+			</View>
+			<View style={[CommonStyle.adsViewRow]}>
+				<Text style={[CommonStyle.adsViewHeader]}>
+					Title
+				</Text>
+				<Text style={[CommonStyle.adsViewText, { width: deviceWidth-100 }]}>
+					{singleAdsJson['adsTitle']}
+				</Text>
+			</View>
+			<View style={[CommonStyle.adsViewRow]}>
+				<Text style={[CommonStyle.adsViewHeader]}>
+					Price
+				</Text>
+				<Text style={[CommonStyle.adsViewText, { width: deviceWidth-100 }]}>
+					{singleAdsJson['offerPrice']}
+				</Text>
+			</View>
+			<View style={[CommonStyle.adsViewRow]}>
+				<Text style={[CommonStyle.adsViewHeader]}>
+					Description
+				</Text>
+				<Text style={[CommonStyle.adsViewText, { width: deviceWidth-100 }]}>
+					{singleAdsJson['description']}
+				</Text>
+			</View>
+			<View style={[CommonStyle.adsViewRow]}>
+				<Text style={[CommonStyle.adsViewHeader]}>
+					Country
+				</Text>
+				<Text style={[CommonStyle.adsViewText, { width: deviceWidth-100 }]}>
+					{singleAdsJson['country']}
+				</Text>
+			</View>
+			<View style={[CommonStyle.adsViewRow]}>
+				<Text style={[CommonStyle.adsViewHeader]}>
+					State
+				</Text>
+				<Text style={[CommonStyle.adsViewText, { width: deviceWidth-100 }]}>
+					{singleAdsJson['state']}
+				</Text>
+			</View>
+			<View style={[CommonStyle.adsViewRow]}>
+				<Text style={[CommonStyle.adsViewHeader]}>
+					City
+				</Text>
+				<Text style={[CommonStyle.adsViewText, { width: deviceWidth-100 }]}>
+					{singleAdsJson['city']}
+				</Text>
+			</View>
+			<View style={[CommonStyle.adsViewRow ]}>
+				<Text style={[CommonStyle.adsViewHeader]}>
+					Posted On
+				</Text>
+				<Text style={[CommonStyle.adsViewText, { width: deviceWidth-100 }]}>
+					{singleAdsJson['createdAt']}
+				</Text>
+			</View>
+		</View>;
+/*
+		if(singleAdsJson != null){
+			descContent = Object.keys(singleAdsJson).map((key)=> {
+				return <View  key={key}>
+					<Text  style={{ flexDirection : 'row', backgroundColor: '#59C2AF', minHeight:40, textAlign:'center', fontSize: 14}}>
+						{ key }
+					</Text>
+					<Text  style={{ flexDirection : 'row', backgroundColor: '#FFF', minHeight:50, padding: 10, alignItems:'center'}}>
+						{singleAdsJson[key]}
+					</Text>
+				</View>;
+			})
+		}*/
+
+
+
+
     		return ( 
-<View style={[{height : this.state.height, flex: 1, width : layoutWidth, backgroundColor:'#59C2AF'}]} 
+<View style={[{height : this.state.height, flex: 1, width : deviceWidth, backgroundColor:'#59C2AF'}]} 
 	onLayout={()=> this.updateLayout()} >
 	<ScrollView >
 		<View style={[styles.wrapper]} >
@@ -112,11 +206,9 @@ export default class AdsView extends Component {
 </View>
 
 		</View>
-
-
-		<Text style={{height:500}}>
-		hafhskjfb jshfjhsajhs ajkshjhsfkj  {JSON.stringify(this.props)}
-		</Text>
+		{
+			descContent		
+		}
 	</ScrollView>
 </View>
 		);
