@@ -96,4 +96,33 @@ module.exports = StyleSheet.create({
 	imageCardTitle: {
 		marginTop: 15,
 	},
+	wrapper: {
+		height: 250,
+		alignItems: 'center',
+		backgroundColor: '#9DD6EB',
+	},
+	slide1: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		width:250,
+		height:200
+	},
+	slide2: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#97CAE5',
+	},
+	slide3: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#92BBD9',
+	},
+	text: {
+		color: '#fff',
+		fontSize: 30,
+		fontWeight: 'bold',
+	}
 });

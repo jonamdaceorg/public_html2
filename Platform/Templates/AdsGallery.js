@@ -56,6 +56,7 @@ export default class AdsGallery extends Component {
 			isLoading : false,
 			height : height,
 			width : width,
+			adsgalleryDetails : {}
 		};
 		this.navigate=this.props.navigation.navigate;
 	}
@@ -66,7 +67,8 @@ export default class AdsGallery extends Component {
 	}
 
 	async componentDidMount() {
-
+		this.updateMyState(this.props.navigation.state.params.data, 'adsgalleryDetails');
+		alert(JSON.stringify(this.props.navigation.state.params.data));
 	}
 
 	updateMyState(value, keyName){
@@ -92,6 +94,7 @@ export default class AdsGallery extends Component {
 <Image source={{uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg=='}} style={{width: layoutWidth, height:this.state.height-25 }}/>
 					</View>
 					</Swiper>
+					<Text>{JSON.stringify(this.state.adsgalleryDetails)}</Text>
 				</ScrollView>
 			</View>
 		);

@@ -23,37 +23,6 @@ import { doPost } from "../Component/MKActions";
 
 import Swiper from 'react-native-swiper';
 var {height, width} = Dimensions.get('window');
-var styles = StyleSheet.create({
-  wrapper: {
-	height: 250,
-    	alignItems: 'center',
-    	backgroundColor: '#9DD6EB',
-  },
-  slide1: {
-    	flex: 1,
-        justifyContent: 'center',
-    	alignItems: 'center',
-	width:250,
-	height:200
-  },
-  slide2: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#97CAE5',
-  },
-  slide3: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#92BBD9',
-  },
-  text: {
-    color: '#fff',
-    fontSize: 30,
-    fontWeight: 'bold',
-  }
-})
 export default class AdsView extends Component {
 	static navigationOptions = { title: 'AdsView', header: null };
   	constructor(props: Object) {
@@ -63,17 +32,15 @@ export default class AdsView extends Component {
 			isLoading : false,
 			height : height,
 			width : width,
-			singleAdsJson : {}
+			singleAdsJson : {},
+			adsgalleryDetails:{}
 		};
 		this.navigate=this.props.navigation.navigate;
 	}
 
 	updateLayout(){
-
 		var {height, width} = Dimensions.get('window');
 		this.setState({height : height, width : width});
-
-
 	}
 
 
@@ -81,21 +48,23 @@ export default class AdsView extends Component {
 	async componentDidMount() {
 	        var paramsData = this.props.navigation.state.params;
 		var singleAdsJson = null;
+		var adsgalleryDetails = null;
 		var that = this;
 		if(paramsData != null){
 			var adsId = paramsData['adsId'];
 			var postJson = new FormData();
 			postJson.append("rf", "json");
 			var subUrl = "singleItem/"+adsId;
-			//that.updateMyState(true, 'isLoading');
 			var response = await doPost(subUrl, postJson);
 			if(response != null){
 				singleAdsJson = response['adsDetails']
+				adsgalleryDetails = response['adsgalleryDetails']
 			}
-			alert(JSON.stringify(response));
 		}
 
-		this.setState({singleAdsJson : singleAdsJson});
+		this.setState({singleAdsJson : singleAdsJson, adsgalleryDetails : adsgalleryDetails});
+
+		//alert(JSON.stringify(this.state.adsgalleryDetails));
 	}
 
 	updateMyState(value, keyName){
@@ -110,7 +79,6 @@ export default class AdsView extends Component {
 	}
 
 	onPressRedirectToPassData(routes, postJson){
-		alert(routes);
 		this.navigate(routes, postJson);
 	}
 
@@ -121,7 +89,7 @@ export default class AdsView extends Component {
 		var descContent = null;
 		var fileName = null;
 		var fileImage = null;
-		if(adsJson != null){
+		if(adsJson != null && adsJson.length>0){
 			var singleAdsJson = adsJson[0];
 		descContent = <View>
 			<View style={[CommonStyle.adsViewRow]}>
@@ -192,16 +160,22 @@ export default class AdsView extends Component {
 			fileName = singleAdsJson['file_name'];
 
 		}
+		var adsgalleryDetails = this.state.adsgalleryDetails; 
+		var adsGalleryCount = 0;
+		if(adsgalleryDetails != null){
+adsGalleryCount = adsgalleryDetails.length;
+		}
+
 		var filePath = ConfigVariable.uploadedAdsFilePathEmpty;
 		if(fileName != null){
 			filePath = ConfigVariable.uploadedAdsFilePath + '/' + singleAdsJson['userCode'] + '/' + singleAdsJson['adsCode'] + '/' + fileName;
 			fileImage = <Image source={{uri: filePath }} >
-<View style={[styles.slide1]}>
+<View style={[CommonStyle.slide1]}>
 		</View>
 </Image>
 		} else {
 			fileImage = <Image source={{uri: filePath }} >
-		<View style={[styles.slide1]}>
+		<View style={[CommonStyle.slide1]}>
 		</View>
 </Image>
 		}
@@ -226,18 +200,19 @@ export default class AdsView extends Component {
 <View style={[{height : this.state.height, flex: 1, width : deviceWidth, backgroundColor:'#59C2AF'}]} 
 	onLayout={()=> this.updateLayout()} >
 	<ScrollView >
-		<View style={[styles.wrapper]} >
-<TouchableOpacity style={[styles.button, {top: 5, left: 0, position:'absolute', width:60, alignItems:'center'}]} onPress={()=>this.onPressRedirectToGoBack()} >
+		<View style={[CommonStyle.wrapper]} >
+<TouchableOpacity style={[CommonStyle.button, {top: 5, left: 0, position:'absolute', width:60, alignItems:'center'}]} onPress={()=>this.onPressRedirectToGoBack()} >
 <Icon name='arrow-left' color='#fff' size={18} style={{paddingTop:5}}/>
 </TouchableOpacity>
 
-<TouchableOpacity onPress={()=>this.onPressRedirectToPassData('AdsGallery', {data: 'hh'})}>
+<TouchableOpacity onPress={()=>this.onPressRedirectToPassData('AdsGallery', {data: this.state.adsgalleryDetails})}>
 {fileImage}
 		
 </TouchableOpacity>
 
-<View style={[styles.button, {top: 210, left: 0, position:'absolute', width:60, alignItems:'center'}]} >
+<View style={[CommonStyle.button, {top: 210, left: 10, position:'absolute', width:70, alignItems:'center', flexDirection:'row'}]} >
 <Icon name='camera' color='#fff' size={18} style={{paddingTop:5}}/>
+<Text style={{fontWeight:'bold', paddingTop : 5}}>  {adsGalleryCount}</Text>
 </View>
 
 		</View>
