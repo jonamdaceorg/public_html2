@@ -56,7 +56,9 @@ export default class AdsGallery extends Component {
 			isLoading : false,
 			height : height,
 			width : width,
-			adsgalleryDetails : {}
+			adsgalleryDetails : {},
+			adsCode : '',
+			userCode :''
 		};
 		this.navigate=this.props.navigation.navigate;
 	}
@@ -68,7 +70,8 @@ export default class AdsGallery extends Component {
 
 	async componentDidMount() {
 		this.updateMyState(this.props.navigation.state.params.data, 'adsgalleryDetails');
-		alert(JSON.stringify(this.props.navigation.state.params.data));
+		this.updateMyState(this.props.navigation.state.params.singleAdsJson[0].adsCode, 'adsCode');
+		this.updateMyState(this.props.navigation.state.params.singleAdsJson[0].userCode, 'userCode');
 	}
 
 	updateMyState(value, keyName){
@@ -79,22 +82,23 @@ export default class AdsGallery extends Component {
 
 	render() { 
 		var layoutWidth = this.state.width;
+		var dispData = null;
+		var disp = null;
+		if(this.state.adsgalleryDetails != null && this.state.adsgalleryDetails.length > 0){
+			var that = this;
+			disp = this.state.adsgalleryDetails.map((adsDetails, index) => {
+				var fileName = adsDetails['file_name'];
+				var filePath = 'http://192.168.43.42/public_html1/uploads/files/userads/'+that.state.userCode +"/"+ that.state.adsCode+"/"+fileName;
+				return <View style={styles.slide3} key={index} ><Image source={{uri: filePath}} style={{width: layoutWidth, height:this.state.height-25 }} /></View>
+			});
+			dispData = <Swiper style={{height: this.state.height-25, width: this.state.width-10, justifyContent:'center', alignSelf:'center'}} showsButtons={false}>{disp}</Swiper>;
+			
+		}
     		return ( 
 			<View style={[{height : this.state.height, flex: 1, width : layoutWidth, backgroundColor:'#59C2AF'}]} 
 				onLayout={()=> this.updateLayout()} >
-				<ScrollView >
-					<Swiper style={{height: this.state.height-25}} showsButtons={false}>
-					<View style={styles.slide1}>
-<Image source={{uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg=='}} style={{width: layoutWidth, height:this.state.height-25 }}/>
-					</View>
-					<View style={styles.slide2}>
-<Image source={{uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg=='}} style={{width: layoutWidth, height:this.state.height-25 }}/>
-					</View>
-					<View style={styles.slide3}>
-<Image source={{uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg=='}} style={{width: layoutWidth, height:this.state.height-25 }}/>
-					</View>
-					</Swiper>
-					<Text>{JSON.stringify(this.state.adsgalleryDetails)}</Text>
+				<ScrollView>
+					{dispData}
 				</ScrollView>
 			</View>
 		);

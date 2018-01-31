@@ -205,7 +205,7 @@ adsGalleryCount = adsgalleryDetails.length;
 <Icon name='arrow-left' color='#fff' size={18} style={{paddingTop:5}}/>
 </TouchableOpacity>
 
-<TouchableOpacity onPress={()=>this.onPressRedirectToPassData('AdsGallery', {data: this.state.adsgalleryDetails})}>
+<TouchableOpacity onPress={()=>this.onPressRedirectToPassData('AdsGallery', {data: this.state.adsgalleryDetails, singleAdsJson : this.state.singleAdsJson})}>
 {fileImage}
 		
 </TouchableOpacity>
