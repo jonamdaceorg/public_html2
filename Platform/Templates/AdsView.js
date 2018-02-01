@@ -157,15 +157,17 @@ export default class AdsView extends Component {
 				</Text>
 			</View>
 		</View>;
-			fileName = singleAdsJson['file_name'];
+
 
 		}
 		var adsgalleryDetails = this.state.adsgalleryDetails; 
 		var adsGalleryCount = 0;
-		if(adsgalleryDetails != null){
-adsGalleryCount = adsgalleryDetails.length;
+		if(adsgalleryDetails != null && adsgalleryDetails != undefined){	
+			adsGalleryCount = adsgalleryDetails.length;
+			if(adsGalleryCount>0){
+				fileName = adsgalleryDetails[0]['file_name'];
+			}
 		}
-
 		var filePath = ConfigVariable.uploadedAdsFilePathEmpty;
 		if(fileName != null){
 			filePath = ConfigVariable.uploadedAdsFilePath + '/' + singleAdsJson['userCode'] + '/' + singleAdsJson['adsCode'] + '/' + fileName;
