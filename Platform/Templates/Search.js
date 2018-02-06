@@ -33,7 +33,11 @@ export default class Search extends Component {
 			ds:ds,
 			categoryId:3,
 	    		listItems : ds.cloneWithRows([]),
-			searchResultJson : {}
+			searchResultJson : {},
+			page : "0",
+			leftRecord : 0,
+			previousPage : -1,
+			nextPage : ""
 		};
 		this.navigate=this.props.navigation.navigate;
 	}
@@ -64,12 +68,22 @@ export default class Search extends Component {
 	onPressRedirect(routes){
 		this.navigate(routes);
 	}
+
+	async onNext(){
+		await this.dataLoading();
+	}
+
+	async onPrevious(){
+		var previousPage = this.state.previousPage;
+		await this.updateMyState(previousPage,'page');
+		await this.dataLoading();
+	}
 	
 	async dataLoading(){
 		var searchResultJson = {};
 		var that = this;
 		var postJson = new FormData();
-		postJson.append("page", 0);
+		postJson.append("page", that.state.page);
 		postJson.append("getListFromPage", "adsList");
 		postJson.append("city", "");
 		postJson.append("categoryId", this.state.categoryId);
@@ -85,9 +99,19 @@ export default class Search extends Component {
 		}, 1000);
 
 		if(response != null){
+			//alert(JSON.stringify(response));
 			var searchData = response['searchData'];
+			var page = parseInt(response['page']);
+			var leftRecord = parseInt(response['left_rec']);
+        	        var nextPage = page + 1;
+			var previousPage = page - 1 ;
 			if(searchData != null){
-				that.updateMyState( response,'searchResultJson');
+				that.updateMyState(response,'searchResultJson');
+				if(leftRecord > 0)
+					that.updateMyState(nextPage,'page');
+				that.updateMyState(previousPage,'previousPage');
+				that.updateMyState(leftRecord,'leftRecord');
+				that.updateMyState(nextPage,'nextPage');
 				that.updateMyState(that.state.ds.cloneWithRows(searchData), 'listItems');
 			}
 		}
@@ -106,6 +130,15 @@ export default class Search extends Component {
 
 		var inputWidth = this.state.width-30;
 		var layoutWidth = this.state.width;
+		var nextBtn = null;
+		var previousBtn = null;
+		if(this.state.leftRecord > 0){
+			nextBtn = <TouchableOpacity onPress={()=>this.onNext()}><Text style={{textAlign : 'left'}}>Next</Text></TouchableOpacity>;
+		}
+		if(this.state.previousPage >= 0){
+			previousBtn = <TouchableOpacity onPress={()=>this.onPrevious()}><Text style={{textAlign : 'right'}}>Previous / </Text></TouchableOpacity>;
+		}
+
     		return ( 
 			<View style={[{height : this.state.height, flex: 1, width : layoutWidth, backgroundColor:'#59C2AF'}]} 
 				onLayout={()=> this.updateLayout()} >
@@ -113,7 +146,10 @@ export default class Search extends Component {
 					<ListView style={{paddingBottom:15}} dataSource={this.state.listItems} 
 						renderRow={(item) => this.constructTemplate(item)} 
 						enableEmptySections={true}/>
-						
+					<View style={{flexDirection:"row", width : layoutWidth, paddingBottom : 20}}>
+						<View style={ {width : layoutWidth/2}}>{ previousBtn }</View>
+						<View style={ {width : layoutWidth/2}}>{ nextBtn }</View>
+					</View>
 					<MKSpinner visible={this.state.isLoading} textContent={"Please wait"} 
 						cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} />
 					
