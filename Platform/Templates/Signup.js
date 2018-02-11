@@ -5,6 +5,8 @@ import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, Tou
 import CommonStyle from "../Styles/CommonStyle";
 import MKButton from "../Component/MKButton";
 import MKTextInput from "../Component/MKTextInput";
+import { doPost } from "../Component/MKActions";
+import MKSpinner from "../Component/MKSpinner";
 
 export default class Login extends Component {
 
@@ -13,6 +15,7 @@ export default class Login extends Component {
 	    	super(props);
 		this.state = {
 			isLoading : false,
+			isCancelable : true,
 			height : height,
 			width : width,
 			errorsJson:{
@@ -82,9 +85,18 @@ export default class Login extends Component {
 		});
 		await that.updateMyState(errorsJson, 'errorsJson');
 		if(isValid == 1){
-				this.setState({isLoading : true});
-
-				this.setState({isLoading : false});
+			this.setState({isLoading : true});
+			
+			var postJson = new FormData();
+			postJson.append("name", inputNameValue);
+			postJson.append("email", inputEmailValue);
+			postJson.append("mobileNumber", inputMobileNumberValue);
+			postJson.append("password", inputPasswordValue);
+			postJson.append("rf", "json");
+			var subUrl = "usersRegister";
+			var response = await doPost(subUrl, postJson);
+			alert(JSON.stringify(response));
+			this.setState({isLoading : false});
 		}
 	}
 
@@ -183,6 +195,7 @@ export default class Login extends Component {
 			<MKButton isLoading={this.state.isLoading} onPress={()=> this.getLogin()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
 				SIGN UP
 			</MKButton>
+       			<MKSpinner visible={this.state.isLoading} textContent={"Please wait"} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} />
 		</View>
 		);
 	}

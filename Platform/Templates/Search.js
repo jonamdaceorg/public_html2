@@ -42,14 +42,20 @@ export default class Search extends Component {
 		this.navigate=this.props.navigation.navigate;
 	}
 
-	async componentDidMount() {
-		var that = this;
-		if(that.props.navigation.state.params != null){
-			var searchText = this.props.navigation.state.params['searchText'];
-			that.updateMyState(searchText, 'searchText');
+	getValueFromArray(arraName, arrayIndex){
+	if(arraName[arrayIndex] != "" && arraName[arrayIndex] != null && arraName[arrayIndex] != "null" && arraName[arrayIndex] != undefined){
+		return arraName[arrayIndex];
+	}
+	return "";	
+	}
 
-			var categoryId = this.props.navigation.state.params['categoryId'];
-			that.updateMyState(categoryId, 'categoryId');
+	async componentDidMount() {
+
+		var paramsArray = this.props.navigation.state.params;
+		if(paramsArray != null){
+			var searchText = this.getValueFromArray(paramsArray, 'searchText');
+			var categoryId = this.getValueFromArray(paramsArray, 'categoryId');
+			await this.setState({categoryId: categoryId, searchText : searchText});
 		}
 		await this.dataLoading();
 	}

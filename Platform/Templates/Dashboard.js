@@ -130,8 +130,12 @@ export default class Dashboard extends Component {
 		this.navigate(routes);
 	}
 
-	onPress(){
-		alert("test");
+	onPressRedirectToPassData(routes, jsondata){
+		this.navigate(routes, jsondata );
+	}
+	onPress(categoryId){
+		this.onPressRedirectToPassData('Search', {categoryId : categoryId, searchText : ""});
+		//alert("test"+categoryId);
 	}
 
 	renderGridItem(item, layoutWidth){
@@ -146,7 +150,7 @@ export default class Dashboard extends Component {
 		icons = icons.replace("fa fa-", "");
 		return (
 		<View style={{ width: layoutWidth/3, height: layoutWidth/3+15, alignItems:'center', marginTop : 5}}>
-       			<TouchableOpacity style={styles.button} onPress={this.onPress} >
+       			<TouchableOpacity style={styles.button} onPress={()=>this.onPress(categoryId)} >
 			<View style={{flexDirection: 'row', backgroundColor: '#FFF', borderRadius:10, width: 70, height: 70,  alignItems:'center', justifyContent:'center'}}>
 				<Icon name={icons} color={color} size={layoutWidth/8} />
 			</View>	

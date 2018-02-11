@@ -171,8 +171,8 @@ export default class AdsView extends Component {
 		var filePath = ConfigVariable.uploadedAdsFilePathEmpty;
 		if(fileName != null){
 			filePath = ConfigVariable.uploadedAdsFilePath + '/' + singleAdsJson['userCode'] + '/' + singleAdsJson['adsCode'] + '/' + fileName;
-			fileImage = <Image source={{uri: filePath }} >
-<View style={[CommonStyle.slide1]}>
+			fileImage = <Image source={{uri: filePath }}  resizeMode={'stretch'} >
+<View style={[CommonStyle.slide1, {height : 300}]}>
 		</View>
 </Image>
 		} else {

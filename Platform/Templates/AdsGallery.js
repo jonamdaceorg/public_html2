@@ -16,6 +16,7 @@ import MKCard from "../Component/MKCard";
 import Divider from '../Component/divider/Divider';
 var banner = require('../images/1stepshop-1.jpg');
 import CommonStyle from "../Styles/CommonStyle";
+import ConfigVariable from '../Component/config/ConfigVariable';
 
 import Swiper from 'react-native-swiper';
 
@@ -88,8 +89,13 @@ export default class AdsGallery extends Component {
 			var that = this;
 			disp = this.state.adsgalleryDetails.map((adsDetails, index) => {
 				var fileName = adsDetails['file_name'];
-				var filePath = 'http://192.168.43.42/public_html1/uploads/files/userads/'+that.state.userCode +"/"+ that.state.adsCode+"/"+fileName;
-				return <View style={styles.slide3} key={index} ><Image source={{uri: filePath}} style={{width: layoutWidth, height:this.state.height-25 }} /></View>
+			var filePath = ConfigVariable.uploadedAdsFilePath + '/' + that.state.userCode + '/' + that.state.adsCode + '/' + fileName;
+				//var filePath = 'http://192.168.43.42/public_html1/uploads/files/userads/'+that.state.userCode +"/"+ that.state.adsCode+"/"+fileName;
+				return <View style={styles.slide3} key={index} >
+<Image source={{uri: filePath}} resizeMode={'contain'}>
+		<View style={[CommonStyle.slide1, {width:this.state.width }]}>
+		</View>
+</Image></View>
 			});
 			dispData = <Swiper style={{height: this.state.height-24, width: this.state.width, justifyContent:'center', alignSelf:'center'}} showsButtons={false}>{disp}</Swiper>;
 			
