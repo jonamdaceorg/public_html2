@@ -136,8 +136,9 @@ export default class Login extends Component {
 				*/
 			}
 
-
-			this.setState({isLoading : false});
+			setTimeout(function(){
+				that.setState({isLoading : false});
+			}, 1000);
 		}
 	}
 
