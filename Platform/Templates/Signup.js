@@ -10,9 +10,9 @@ import MKSpinner from "../Component/MKSpinner";
 
 export default class Login extends Component {
 
-  	constructor(props: Object) {
+	constructor(props: Object) {
 		var {height, width} = Dimensions.get('window');
-	    	super(props);
+		super(props);
 		this.state = {
 			isLoading : false,
 			isCancelable : true,
@@ -24,10 +24,10 @@ export default class Login extends Component {
 				inputMobileNumber : null,
 				inputPassword : null
 			},
-			inputName : '',
-			inputEmail : '',
-			inputMobileNumber : '',
-			inputPassword : ''
+			inputName : 'mathank',
+			inputEmail : 'mathanaiht@gmail.com',
+			inputMobileNumber : '8870306683',
+			inputPassword : '1234'
 		};
 		this.navigate=this.props.navigation.navigate;
 		this.onFocus = this.onFocus.bind(this);
@@ -35,11 +35,11 @@ export default class Login extends Component {
 	}
 
 	focusNextField(nextField) {
-		this.refs[nextField].focus(); 
+		this.refs[nextField].focus();
 	}
 
 	onFocus() {
-		let errorsJson = this.state.errorsJson; 
+		let errorsJson = this.state.errorsJson;
 		var that = this;
 		for (let name in errorsJson) {
 			let ref = this.refs[name];
@@ -86,7 +86,7 @@ export default class Login extends Component {
 		await that.updateMyState(errorsJson, 'errorsJson');
 		if(isValid == 1){
 			this.setState({isLoading : true});
-			
+
 			var postJson = new FormData();
 			postJson.append("name", inputNameValue);
 			postJson.append("email", inputEmailValue);
@@ -115,7 +115,7 @@ export default class Login extends Component {
 		this.navigate(routes);
 	}
 
-	render() { 
+	render() {
 		var inputWidth = this.state.width-30;
 		var layoutWidth = this.state.width;
 		var inputHeight = 38;
@@ -142,61 +142,61 @@ export default class Login extends Component {
 		//Error Block Code end
 
 		return (
-		<View style={[{height : this.state.height, flex: 1, width : layoutWidth}]} onLayout={()=> this.updateLayout()}>
-			<ScrollView >
-		      		<View style={{flex: 1, width:inputWidth, alignSelf:'center'}}>
+			<View style={[{height : this.state.height, flex: 1, width : layoutWidth}]} onLayout={()=> this.updateLayout()}>
+				<ScrollView >
+					<View style={{flex: 1, width:inputWidth, alignSelf:'center'}}>
 
-					<MKTextInput label={'Name'} highlightColor={inputHighlightColor}
-						onChangeText={(inputName) => this.updateMyState(inputName, 'inputName')}
-						value = {this.state.inputName}
-						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-						returnKeyType={'next'} ref="inputName" 
-						onSubmitEditing={(event) => this.focusNextField('inputEmail')}
-						onFocus={()=>this.onFocus()}
-						/>
+						<MKTextInput label={'Name'} highlightColor={inputHighlightColor}
+									 onChangeText={(inputName) => this.updateMyState(inputName, 'inputName')}
+									 value = {this.state.inputName}
+									 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+									 returnKeyType={'next'} ref="inputName"
+									 onSubmitEditing={(event) => this.focusNextField('inputEmail')}
+									 onFocus={()=>this.onFocus()}
+							/>
 						{ inputNameError }
 
-					<MKTextInput label={'Email'} highlightColor={inputHighlightColor}
-						onChangeText={(inputEmail) => this.updateMyState(inputEmail, 'inputEmail')}
-						value = {this.state.inputEmail}
-						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-						returnKeyType={'next'} ref="inputEmail" 
-						onSubmitEditing={(event) => this.focusNextField('inputMobileNumber')}
-						onFocus={()=>this.onFocus()}
-						/>
+						<MKTextInput label={'Email'} highlightColor={inputHighlightColor}
+									 onChangeText={(inputEmail) => this.updateMyState(inputEmail, 'inputEmail')}
+									 value = {this.state.inputEmail}
+									 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+									 returnKeyType={'next'} ref="inputEmail"
+									 onSubmitEditing={(event) => this.focusNextField('inputMobileNumber')}
+									 onFocus={()=>this.onFocus()}
+							/>
 						{ inputEmailError }
 
-					<MKTextInput label={'Mobile Number'} highlightColor={inputHighlightColor}
-						onChangeText={(inputMobileNumber) => this.updateMyState(inputMobileNumber, 'inputMobileNumber')}
-						value = {this.state.inputMobileNumber}
-						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-						keyboardType={'numeric'} maxLength={10} returnKeyType={'next'} ref="inputMobileNumber" 
-						onSubmitEditing={(event) => this.focusNextField('inputPassword')}
-						onFocus={()=>this.onFocus()}
-						/>
+						<MKTextInput label={'Mobile Number'} highlightColor={inputHighlightColor}
+									 onChangeText={(inputMobileNumber) => this.updateMyState(inputMobileNumber, 'inputMobileNumber')}
+									 value = {this.state.inputMobileNumber}
+									 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+									 keyboardType={'numeric'} maxLength={10} returnKeyType={'next'} ref="inputMobileNumber"
+									 onSubmitEditing={(event) => this.focusNextField('inputPassword')}
+									 onFocus={()=>this.onFocus()}
+							/>
 						{ inputMobileNumberError }
 
-					<MKTextInput label={'Password'} highlightColor={inputHighlightColor}  
-						onChangeText={(inputPassword) => this.updateMyState(inputPassword, 'inputPassword')}
-						value = {this.state.inputPassword}
-						inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-						secureTextEntry={true} returnKeyType={'done'} ref="inputPassword"
-						onSubmitEditing={(event) => this.getLogin()}
-						onFocus={()=>this.onFocus()}
-						/>
+						<MKTextInput label={'Password'} highlightColor={inputHighlightColor}
+									 onChangeText={(inputPassword) => this.updateMyState(inputPassword, 'inputPassword')}
+									 value = {this.state.inputPassword}
+									 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+									 secureTextEntry={true} returnKeyType={'done'} ref="inputPassword"
+									 onSubmitEditing={(event) => this.getLogin()}
+									 onFocus={()=>this.onFocus()}
+							/>
 						{ inputPasswordError }
 
-					<View style={{paddingTop: 30}}></View>
-					<TouchableOpacity onPress={()=> this.onPressRedirect('ForgotPassword')}>					
-						<Text style={{textAlign:'right', color: '#60AAC6', fontSize: 14}}>FORGOT PASSWORD?</Text>
-					</TouchableOpacity>
-				</View>
-			</ScrollView>
-			<MKButton isLoading={this.state.isLoading} onPress={()=> this.getLogin()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
-				SIGN UP
-			</MKButton>
-       			<MKSpinner visible={this.state.isLoading} textContent={"Please wait"} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} />
-		</View>
+						<View style={{paddingTop: 30}}></View>
+						<TouchableOpacity onPress={()=> this.onPressRedirect('ForgotPassword')}>
+							<Text style={{textAlign:'right', color: '#60AAC6', fontSize: 14}}>FORGOT PASSWORD?</Text>
+						</TouchableOpacity>
+					</View>
+				</ScrollView>
+				<MKButton isLoading={this.state.isLoading} onPress={()=> this.getLogin()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
+					SIGN UP
+				</MKButton>
+				<MKSpinner visible={this.state.isLoading} textContent={"Please wait"} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} />
+			</View>
 		);
 	}
 }
