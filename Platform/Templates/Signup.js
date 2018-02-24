@@ -8,6 +8,9 @@ import MKTextInput from "../Component/MKTextInput";
 import { doPost } from "../Component/MKActions";
 import MKSpinner from "../Component/MKSpinner";
 
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
+
 export default class Login extends Component {
 
 	constructor(props: Object) {
@@ -51,10 +54,15 @@ export default class Login extends Component {
 	}
 
 	componentDidMount() {
-
+		MessageBarManager.registerMessageBar(this.refs.alert);
 	}
 
-	async getLogin(){
+	componentWillUnmount() {
+		// Remove the alert located on this master page from the manager
+		MessageBarManager.unregisterMessageBar();
+	}
+
+	async doSignup(){
 		var that = this;
 		var inputNameValue = this.state.inputName;
 		var inputEmailValue = this.state.inputEmail;
@@ -95,7 +103,40 @@ export default class Login extends Component {
 			postJson.append("rf", "json");
 			var subUrl = "usersRegister";
 			var response = await doPost(subUrl, postJson);
-			alert(JSON.stringify(response));
+			//alert(JSON.stringify(response));
+			if(response != null && response != "" && response != undefined){
+				var status = response.status;
+				var message = response.message;
+				var alertType = "";
+				var title = "";
+				if(status == 1){
+					alertType = 'success';
+					title = "Success!";
+				} else {
+					title = "Error";
+					alertType = 'error';
+				}
+
+				MessageBarManager.showAlert({
+					title: title,
+					message: message,
+					alertType: alertType,
+					position: 'bottom',
+					// See Properties section for full customization
+					// Or check `index.ios.js` or `index.android.js` for a complete example
+				});
+
+				/*
+				that.setState({
+					inputName : "",
+					inputEmail : "",
+					inputMobileNumber : "",
+					inputPassword : "",
+				});
+				*/
+			}
+
+
 			this.setState({isLoading : false});
 		}
 	}
@@ -181,7 +222,7 @@ export default class Login extends Component {
 									 value = {this.state.inputPassword}
 									 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
 									 secureTextEntry={true} returnKeyType={'done'} ref="inputPassword"
-									 onSubmitEditing={(event) => this.getLogin()}
+									 onSubmitEditing={(event) => this.doSignup()}
 									 onFocus={()=>this.onFocus()}
 							/>
 						{ inputPasswordError }
@@ -192,10 +233,11 @@ export default class Login extends Component {
 						</TouchableOpacity>
 					</View>
 				</ScrollView>
-				<MKButton isLoading={this.state.isLoading} onPress={()=> this.getLogin()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
+				<MKButton onPress={()=> this.doSignup()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
 					SIGN UP
 				</MKButton>
 				<MKSpinner visible={this.state.isLoading} textContent={"Please wait"} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} />
+				<MessageBarAlert ref="alert" />
 			</View>
 		);
 	}
