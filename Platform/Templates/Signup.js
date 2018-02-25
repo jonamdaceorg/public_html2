@@ -27,13 +27,22 @@ export default class Login extends Component {
 				inputMobileNumber : null,
 				inputPassword : null
 			},
-			inputName : 'mathank',
-			inputEmail : 'mathanaiht@gmail.com',
-			inputMobileNumber : '8870306683',
-			inputPassword : '1234'
+			errorsJsonOtp :{
+				inputOtp : null
+			},
+			inputOtp: '',
+			otpStatus : '0',
+			otpUserId : '0',
+			otpMessage: '',
+			otpText : '',
+			inputName : '',
+			inputEmail : '',
+			inputMobileNumber : '',
+			inputPassword : ''
 		};
 		this.navigate=this.props.navigation.navigate;
 		this.onFocus = this.onFocus.bind(this);
+		this.onFocusOtp = this.onFocusOtp.bind(this);
 		this.focusNextField = this.focusNextField.bind(this);
 	}
 
@@ -51,6 +60,18 @@ export default class Login extends Component {
 			}
 		}
 		that.updateMyState(errorsJson, 'errorsJson');
+	}
+
+	onFocusOtp() {
+		let errorsJsonOtp = this.state.errorsJsonOtp;
+		var that = this;
+		for (let name in errorsJsonOtp) {
+			let ref = this.refs[name];
+			if (ref && ref.isFocused()) {
+				errorsJsonOtp[name] = null;
+			}
+		}
+		that.updateMyState(errorsJsonOtp, 'errorsJsonOtp');
 	}
 
 	componentDidMount() {
@@ -111,10 +132,20 @@ export default class Login extends Component {
 				var title = "";
 				if(status == 1){
 					alertType = 'success';
+					var otpText = response.otpText;
+
 					title = "Success!";
+					that.setState({
+						otpStatus : "1",
+						otpText : otpText
+					})
 				} else {
 					title = "Error";
 					alertType = 'error';
+					//that.setState({
+					//	otpStatus : "1",
+					//	otpText : "123456"
+					//})
 				}
 
 				MessageBarManager.showAlert({
@@ -157,6 +188,56 @@ export default class Login extends Component {
 		this.navigate(routes);
 	}
 
+
+	async verifyUserAndOtp(){
+
+		var that = this;
+		var inputOtp = that.state.inputOtp;
+		var isValid = 1;
+		var stateArray = that.state;
+		var errorsJsonOtp = that.state.errorsJsonOtp;
+		var key = 'inputOtp';
+		var stateArrayValue = stateArray[key];
+
+		if(stateArrayValue == null || stateArrayValue==""){
+			errorsJsonOtp[key] = "This OTP is required";
+			isValid = 0;
+		}  else if(stateArrayValue.length != 6){
+			errorsJsonOtp[key] = "Length should not be less than 6";
+			isValid = 0;
+		} else if(isNaN(stateArrayValue) || stateArrayValue != this.state.otpText){
+			errorsJsonOtp[key] = "Invalid OTP";
+			isValid = 0;
+		} else {
+			errorsJsonOtp[key] = null;
+		}
+
+		await that.updateMyState(errorsJsonOtp, 'errorsJsonOtp');
+		if(isValid == 1){
+
+			that.setState({
+				isLoading : true,
+				otpStatus : "0",
+				inputName : "",
+				inputEmail : "",
+				inputMobileNumber : "",
+				inputPassword : "",
+			});
+
+			MessageBarManager.showAlert({
+				title: "Mobile Number verification!",
+				message: "Your Mobile Number has been Successfully verified! ",
+				alertType: "success",
+				position: 'bottom',
+			});
+
+			setTimeout(function(){
+				that.setState({isLoading : false});
+				that.onPressRedirect("Login");
+			}, 2000);
+		}
+	}
+	
 	render() {
 		var inputWidth = this.state.width-30;
 		var layoutWidth = this.state.width;
@@ -181,62 +262,96 @@ export default class Login extends Component {
 		if(this.state.errorsJson.inputEmail != null){
 			inputEmailError = <Text style={CommonStyle.errorText}>{this.state.errorsJson.inputEmail}</Text>;
 		}
+
+		var inputOtpError = null;
+		if(this.state.errorsJsonOtp.inputOtp != null){
+			inputOtpError = <Text style={CommonStyle.errorText}>{this.state.errorsJsonOtp.inputOtp}</Text>;
+		}
 		//Error Block Code end
+
+		var otpContent = <View style={{flex: 1, width:inputWidth, alignSelf:'center'}}>
+
+			<MKTextInput label={'Name'} highlightColor={inputHighlightColor}
+						 onChangeText={(inputName) => this.updateMyState(inputName, 'inputName')}
+						 value = {this.state.inputName}
+						 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+						 returnKeyType={'next'} ref="inputName"
+						 onSubmitEditing={(event) => this.focusNextField('inputEmail')}
+						 onFocus={()=>this.onFocus()}
+				/>
+			{ inputNameError }
+
+			<MKTextInput label={'Email'} highlightColor={inputHighlightColor}
+						 onChangeText={(inputEmail) => this.updateMyState(inputEmail, 'inputEmail')}
+						 value = {this.state.inputEmail}
+						 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+						 returnKeyType={'next'} ref="inputEmail"
+						 onSubmitEditing={(event) => this.focusNextField('inputMobileNumber')}
+						 onFocus={()=>this.onFocus()}
+				/>
+			{ inputEmailError }
+
+			<MKTextInput label={'Mobile Number'} highlightColor={inputHighlightColor}
+						 onChangeText={(inputMobileNumber) => this.updateMyState(inputMobileNumber, 'inputMobileNumber')}
+						 value = {this.state.inputMobileNumber}
+						 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+						 keyboardType={'numeric'} maxLength={10} returnKeyType={'next'} ref="inputMobileNumber"
+						 onSubmitEditing={(event) => this.focusNextField('inputPassword')}
+						 onFocus={()=>this.onFocus()}
+				/>
+			{ inputMobileNumberError }
+
+			<MKTextInput label={'Password'} highlightColor={inputHighlightColor}
+						 onChangeText={(inputPassword) => this.updateMyState(inputPassword, 'inputPassword')}
+						 value = {this.state.inputPassword}
+						 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+						 secureTextEntry={true} returnKeyType={'done'} ref="inputPassword"
+						 onSubmitEditing={(event) => this.doSignup()}
+						 onFocus={()=>this.onFocus()}
+				/>
+			{ inputPasswordError }
+
+			<View style={{paddingTop: 30}}></View>
+			<TouchableOpacity onPress={()=> this.onPressRedirect('ForgotPassword')}>
+				<Text style={{textAlign:'right', color: '#60AAC6', fontSize: 14}}>FORGOT PASSWORD?</Text>
+			</TouchableOpacity>
+		</View>;
+		var dynamicBtn = <MKButton onPress={()=> this.doSignup()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
+			SIGN UP
+		</MKButton>;
+
+		var responseMsg = null;
+		if(this.state.otpStatus == '1'){
+			otpContent = <View style={{flex: 1, width:inputWidth, alignSelf:'center'}}>
+				<Text style={CommonStyle.labelText}>OTP has been sent to your registered Mobile Number: {this.state.inputMobileNumber}</Text>
+				<MKTextInput label={'OTP'} highlightColor={inputHighlightColor}
+							 onChangeText={(inputOtp) => this.updateMyState(inputOtp, 'inputOtp')}
+							 value = {this.state.inputOtp}
+							 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+							 keyboardType={'numeric'} maxLength={6} returnKeyType={'go'} ref="inputOtp"
+							 onSubmitEditing={(event) => this.verifyUserAndOtp()}
+							 onFocus={()=>this.onFocusOtp()}
+					/>
+				{ inputOtpError }
+
+				<View style={{paddingTop: 10}}></View>
+				<Text style={[CommonStyle.errorText, {textAlign : 'right', textDecorationLine: 'underline'}]} onPress={()=> this.confirmUserAndSendOtp()}>Re-Send OTP?</Text>
+			</View>;
+			dynamicBtn = <MKButton onPress={()=> this.verifyUserAndOtp()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
+				VERIFY OTP
+			</MKButton>;
+		}  else if(this.state.otpStatus == '2' ){
+			otpContent = null;
+			dynamicBtn = null;
+			responseMsg = <Text style={CommonStyle.errorText}>{this.state.otpMessage}</Text>;
+		}
 
 		return (
 			<View style={[{height : this.state.height, flex: 1, width : layoutWidth}]} onLayout={()=> this.updateLayout()}>
 				<ScrollView >
-					<View style={{flex: 1, width:inputWidth, alignSelf:'center'}}>
-
-						<MKTextInput label={'Name'} highlightColor={inputHighlightColor}
-									 onChangeText={(inputName) => this.updateMyState(inputName, 'inputName')}
-									 value = {this.state.inputName}
-									 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-									 returnKeyType={'next'} ref="inputName"
-									 onSubmitEditing={(event) => this.focusNextField('inputEmail')}
-									 onFocus={()=>this.onFocus()}
-							/>
-						{ inputNameError }
-
-						<MKTextInput label={'Email'} highlightColor={inputHighlightColor}
-									 onChangeText={(inputEmail) => this.updateMyState(inputEmail, 'inputEmail')}
-									 value = {this.state.inputEmail}
-									 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-									 returnKeyType={'next'} ref="inputEmail"
-									 onSubmitEditing={(event) => this.focusNextField('inputMobileNumber')}
-									 onFocus={()=>this.onFocus()}
-							/>
-						{ inputEmailError }
-
-						<MKTextInput label={'Mobile Number'} highlightColor={inputHighlightColor}
-									 onChangeText={(inputMobileNumber) => this.updateMyState(inputMobileNumber, 'inputMobileNumber')}
-									 value = {this.state.inputMobileNumber}
-									 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-									 keyboardType={'numeric'} maxLength={10} returnKeyType={'next'} ref="inputMobileNumber"
-									 onSubmitEditing={(event) => this.focusNextField('inputPassword')}
-									 onFocus={()=>this.onFocus()}
-							/>
-						{ inputMobileNumberError }
-
-						<MKTextInput label={'Password'} highlightColor={inputHighlightColor}
-									 onChangeText={(inputPassword) => this.updateMyState(inputPassword, 'inputPassword')}
-									 value = {this.state.inputPassword}
-									 inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-									 secureTextEntry={true} returnKeyType={'done'} ref="inputPassword"
-									 onSubmitEditing={(event) => this.doSignup()}
-									 onFocus={()=>this.onFocus()}
-							/>
-						{ inputPasswordError }
-
-						<View style={{paddingTop: 30}}></View>
-						<TouchableOpacity onPress={()=> this.onPressRedirect('ForgotPassword')}>
-							<Text style={{textAlign:'right', color: '#60AAC6', fontSize: 14}}>FORGOT PASSWORD?</Text>
-						</TouchableOpacity>
-					</View>
+					{otpContent}
 				</ScrollView>
-				<MKButton onPress={()=> this.doSignup()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
-					SIGN UP
-				</MKButton>
+				{dynamicBtn}
 				<MKSpinner visible={this.state.isLoading} textContent={"Please wait"} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}} />
 				<MessageBarAlert ref="alert" />
 			</View>
