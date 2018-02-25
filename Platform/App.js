@@ -18,9 +18,21 @@ import Search from "./Templates/Search";
 import AdsView from "./Templates/AdsView";
 import SearchAdsContent from "./Templates/SearchAdsContent";
 import AdsGallery from "./Templates/AdsGallery";
+import AdsPost from "./Templates/AdsPost";
 
 const SimpleApp = StackNavigator(
 	{
+		AdsPost: {
+			screen: AdsPost,
+			navigationOptions: ({ navigation }) => ({
+				tabBarLabel: 'Three',
+				tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+				title: 'AdsPost',
+				headerStyle: { backgroundColor: 'orange' },
+				headerTintColor: '#fff',
+				//headerRight: <Text navigation={navigation} >test</Text>
+			})
+		},
 		Signup : {
 			screen: Signup,
 			navigationOptions: ({ navigation }) => ({
