@@ -8,12 +8,17 @@ import MKTextInput from "../Component/MKTextInput";
 import { doPost } from "../Component/MKActions";
 import MKSpinner from "../Component/MKSpinner";
 
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+
 export default class AdsPost extends Component {
 
     constructor(props: Object) {
         var {height, width} = Dimensions.get('window');
         super(props);
         this.state = {
+            isDateTimePickerVisible: false,
             isLoading : false,
             isCancelable : true,
             height : height,
@@ -74,6 +79,23 @@ export default class AdsPost extends Component {
     onPressRedirect(routes){
         this.navigate(routes);
     }
+
+    _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
+
+    _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
+
+    _handleDatePicked = (currentDate) => {
+        //console.log('A date has been picked: ', currentDate);
+        var date = currentDate.getDate();
+        var month = currentDate.getMonth(); //Be careful! January is 0 not 1
+        var year = currentDate.getFullYear();
+
+        var dateString = date + "-" +(month + 1) + "-" + year;
+        this.setState({
+            startDate: dateString
+        });
+        this._hideDateTimePicker();
+    };
 
     async doAdPost(){
         var that = this;
@@ -204,18 +226,28 @@ export default class AdsPost extends Component {
                                      onFocus={()=>this.onFocus()}
                             />
                         { adsTitleError }
+                        <View style={{ flexDirection: "row" }}>
                         <MKTextInput label={'Start Date'} highlightColor={inputHighlightColor}
-                                     multiline = {true}
+                                     editable = {false}
                                      onChangeText={(startDate) => this.updateMyState(startDate, 'startDate')}
                                      value = {this.state.startDate}
-                                     inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
+                                     inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth - 50}}
                                      returnKeyType={'next'} ref="startDate"
                                      onSubmitEditing={(event) => this.focusNextField('noOfDaysToActive')}
-                                     onFocus={()=>this.onFocus()}
+                                     onFocus={this._showDateTimePicker}
                             />
+                            <TouchableOpacity onPress={this._showDateTimePicker} style={{marginTop : 40, paddingLeft : 20 }}>
+                                <Icon name='calendar' color='#59C2AF' size={25} />
+                                <DateTimePicker
+                                    isVisible={this.state.isDateTimePickerVisible}
+                                    onConfirm={this._handleDatePicked}
+                                    onCancel={this._hideDateTimePicker}
+                                    />
+                            </TouchableOpacity>
+                        </View>
                         { startDateError }
                         <MKTextInput label={'No Of Days To Active'} highlightColor={inputHighlightColor}
-                                     multiline = {true}
+                                     keyboardType={'numeric'} maxLength={2}
                                      onChangeText={(noOfDaysToActive) => this.updateMyState(noOfDaysToActive, 'noOfDaysToActive')}
                                      value = {this.state.noOfDaysToActive}
                                      inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
