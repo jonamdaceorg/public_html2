@@ -12,33 +12,24 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MultiSelect from 'react-native-multiple-select';
 
-export default class AdsPost extends Component {
+export default class AdPostPageTwo extends Component {
 
     constructor(props: Object) {
         var {height, width} = Dimensions.get('window');
         super(props);
         this.state = {
-	    stage : 0,
     	    selectedItems : [],
             isDateTimePickerVisible: false,
             isLoading : false,
             isCancelable : true,
             height : height,
             width : width,
-            stateId : '',
-            cityId : '',
-            categoryId : '',
-            subCategoryId : '',
             adsTitle : '',
             noOfDaysToActive : '',
             startDate : '',
             adsDescription : '',
             imageArray : '',
             errorsJson:{
-                stateId : null,
-                cityId : null,
-                categoryId : null,
-                subCategoryId : null,
                 adsTitle : null,
                 noOfDaysToActive : null,
                 startDate : null,
@@ -133,9 +124,6 @@ export default class AdsPost extends Component {
 
     }
 
-	doContinue(){
-		this.setState({stage : 1});
-	}
 
 	onSelectedItemsChange = selectedItems => {
 		this.setState({ selectedItems });
@@ -150,23 +138,6 @@ export default class AdsPost extends Component {
         var inputHighlightColor = "#00BCD4";
         const { selectedItems } = this.state;
 
-        //Error Block Code start
-        var stateIdError = null;
-        if(this.state.errorsJson.stateId != null){
-            stateIdError = <Text style={CommonStyle.errorText}>{this.state.errorsJson.stateId}</Text>;
-        }
-        var cityIdError = null;
-        if(this.state.errorsJson.cityId != null){
-            cityIdError = <Text style={CommonStyle.errorText}>{this.state.errorsJson.cityId}</Text>;
-        }
-        var categoryIdError = null;
-        if(this.state.errorsJson.categoryId != null){
-            categoryIdError = <Text style={CommonStyle.errorText}>{this.state.errorsJson.categoryId}</Text>;
-        }
-        var subCategoryIdError = null;
-        if(this.state.errorsJson.subCategoryId != null){
-            subCategoryIdError = <Text style={CommonStyle.errorText}>{this.state.errorsJson.subCategoryId}</Text>;
-        }
         var adsTitleError = null;
         if(this.state.errorsJson.subCategoryId != null){
             adsTitleError = <Text style={CommonStyle.errorText}>{this.state.errorsJson.adsTitle}</Text>;
@@ -214,82 +185,8 @@ export default class AdsPost extends Component {
 	}];
 	var displayContent = null;
 	var dynamicBtn = null;
-	if(this.state.stage == 0){
-		displayContent = 
-			<View style={{flex: 1, width:inputWidth, alignSelf:'center', paddingTop : 20}}>
-				<MultiSelect
-					  hideTags
-					  single
-					  items={items}
-					  uniqueKey="id"
-					  ref={(component) => { this.multiSelect = component }}
-					  onSelectedItemsChange={this.onSelectedItemsChange}
-					  selectedItems={selectedItems}
-					  selectText="Pick Items"
-					  searchInputPlaceholderText="Search Items..."
-					  onChangeInput={ (text)=> console.log(text)}
-					  altFontFamily="ProximaNova-Light"
-					  tagRemoveIconColor="#CCC"
-					  tagBorderColor="#CCC"
-					  tagTextColor="#CCC"
-					  selectedItemTextColor="#CCC"
-					  selectedItemIconColor="#CCC"
-					  itemTextColor="#000"
-					  displayKey="name"
-					  searchInputStyle={{ color: '#CCC'}}
-					  submitButtonColor="#CCC"
-					  submitButtonText="Submit"
-					  fixedHeight={true}
-
-				/>
-			</View>;
-		dynamicBtn = <MKButton onPress={()=> this.doContinue()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
-		    CONTINUE
-		</MKButton>;
-
-	} else if(this.state.stage == 1){
 		displayContent = <ScrollView >
                     <View style={{flex: 1, width:inputWidth, alignSelf:'center'}}>			
-                        <MKTextInput label={'State'} highlightColor={inputHighlightColor}
-                                     multiline = {true}
-                                     onChangeText={(stateId) => this.updateMyState(stateId, 'stateId')}
-                                     value = {this.state.stateId}
-                                     inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-                                     returnKeyType={'next'} ref="stateId"
-                                     onSubmitEditing={(event) => this.focusNextField('cityId')}
-                                     onFocus={()=>this.onFocus()}
-                            />
-                        { stateIdError }
-                        <MKTextInput label={'City'} highlightColor={inputHighlightColor}
-                                     multiline = {true}
-                                     onChangeText={(cityId) => this.updateMyState(cityId, 'cityId')}
-                                     value = {this.state.cityId}
-                                     inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-                                     returnKeyType={'next'} ref="cityId"
-                                     onSubmitEditing={(event) => this.focusNextField('categoryId')}
-                                     onFocus={()=>this.onFocus()}
-                            />
-                        { cityIdError }
-                        <MKTextInput label={'Category'} highlightColor={inputHighlightColor}
-                                     multiline = {true}
-                                     onChangeText={(categoryId) => this.updateMyState(categoryId, 'categoryId')}
-                                     value = {this.state.categoryId}
-                                     inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-                                     returnKeyType={'next'} ref="categoryId"
-                                     onSubmitEditing={(event) => this.focusNextField('subCategoryId')}
-                                     onFocus={()=>this.onFocus()}
-                            />
-                        { categoryIdError }
-                        <MKTextInput label={'Sub Category'} highlightColor={inputHighlightColor}
-                                     multiline = {true}
-                                     onChangeText={(subCategoryId) => this.updateMyState(subCategoryId, 'subCategoryId')}
-                                     value = {this.state.subCategoryId}
-                                     inputStyle={{fontSize: inputFontSize,  height: inputHeight, width: inputWidth}}
-                                     returnKeyType={'next'} ref="subCategoryId"
-                                     onSubmitEditing={(event) => this.focusNextField('adsTitle')}
-                                     onFocus={()=>this.onFocus()}
-                            />
-                        { subCategoryIdError }
                         <MKTextInput label={'Ads Title'} highlightColor={inputHighlightColor}
                                      multiline = {true}
                                      onChangeText={(adsTitle) => this.updateMyState(adsTitle, 'adsTitle')}
@@ -345,7 +242,7 @@ export default class AdsPost extends Component {
 		dynamicBtn = <MKButton onPress={()=> this.doAdPost()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
                     POST AD
                 </MKButton>;
-	}
+	
         return (
             <View style={[{height : this.state.height, flex: 1, width : layoutWidth}]} onLayout={()=> this.updateLayout()}>
                 {displayContent}

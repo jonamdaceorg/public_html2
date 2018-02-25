@@ -18,11 +18,35 @@ import Search from "./Templates/Search";
 import AdsView from "./Templates/AdsView";
 import SearchAdsContent from "./Templates/SearchAdsContent";
 import AdsGallery from "./Templates/AdsGallery";
-import AdsPost from "./Templates/AdsPost";
+//import AdsPost from "./Templates/AdsPost";
+import AdPostPageOne from "./Templates/AdPostPageOne";
+import AdPostPageTwo from "./Templates/AdPostPageTwo";
 
 const SimpleApp = StackNavigator(
 	{
-		AdsPost: {
+		AdPostPageOne: {
+			screen: AdPostPageOne,
+			navigationOptions: ({ navigation }) => ({
+				tabBarLabel: 'Three',
+				tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+				title: 'Ads Post Step - 1',
+				headerStyle: { backgroundColor: 'orange' },
+				headerTintColor: '#fff',
+				//headerRight: <Text navigation={navigation} >test</Text>
+			})
+		},
+		AdPostPageTwo: {
+			screen: AdPostPageTwo,
+			navigationOptions: ({ navigation }) => ({
+				tabBarLabel: 'Three',
+				tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+				title: 'Ads Post Step - 2',
+				headerStyle: { backgroundColor: 'orange' },
+				headerTintColor: '#fff',
+				//headerRight: <Text navigation={navigation} >test</Text>
+			})
+		},		
+		/*AdsPost: {
 			screen: AdsPost,
 			navigationOptions: ({ navigation }) => ({
 				tabBarLabel: 'Three',
@@ -32,7 +56,7 @@ const SimpleApp = StackNavigator(
 				headerTintColor: '#fff',
 				//headerRight: <Text navigation={navigation} >test</Text>
 			})
-		},
+		},*/
 		Signup : {
 			screen: Signup,
 			navigationOptions: ({ navigation }) => ({
