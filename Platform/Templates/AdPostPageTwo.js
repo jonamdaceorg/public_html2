@@ -31,6 +31,7 @@ export default class AdPostPageTwo extends Component {
             adsDescription : '',
             imageArray : '',
             avatarSource  : null,
+            avatarSourceArray  : [],
             errorsJson:{
                 adsTitle : null,
                 noOfDaysToActive : null,
@@ -97,8 +98,11 @@ export default class AdPostPageTwo extends Component {
                 // You can also display the image using data:
                 // let source = { uri: 'data:image/jpeg;base64,' + response.data };
 
+                var avatarSourceArray = this.state.avatarSourceArray;
+                avatarSourceArray.push(source);
                 this.setState({
-                    avatarSource: source
+                    avatarSource: source,
+                    avatarSourceArray : avatarSourceArray
                 });
             }
         });
@@ -170,6 +174,14 @@ export default class AdPostPageTwo extends Component {
 		alert(selectedItems);
 	};
 
+    removeImage(key){
+        var avatarSourceArray = this.state.avatarSourceArray;
+        avatarSourceArray.splice(key, 1);
+        this.setState({
+            avatarSourceArray : avatarSourceArray
+        });
+    }
+
     render() {
         var inputWidth = this.state.width - 30;
         var layoutWidth = this.state.width;
@@ -223,6 +235,24 @@ export default class AdPostPageTwo extends Component {
 	id: 'suudydjsjd',
 	name: 'Abuja',
 	}];
+        var resContentImg = [];
+
+        var that = this;
+        this.state.avatarSourceArray.map(function(value, key){
+            if(value != null){
+                resContentImg.push(
+                    <View key={"image"+key} style={{ width: 120, height : 120, margin:5, borderRadius : 10, borderWidth: 1, borderColor: 'grey', alignSelf : 'center', justifyContent : 'center'}}>
+                    {
+                        value != null ? <View>
+                            <Image source={value} style={{width : 120, height : 120, borderRadius : 10}} />
+                            <Icon name='times-circle' color='red' size={30} style={{position : "absolute", top: 5, right : 5}} onPress={()=> that.removeImage(key)}/>
+                        </View> : <Text style={{textAlign:"center"}}>Select a photo</Text>
+                    }
+                </View>
+                )
+            }
+        });
+
 	var displayContent = null;
 	var dynamicBtn = null;
 		displayContent = <ScrollView >
@@ -277,19 +307,20 @@ export default class AdPostPageTwo extends Component {
                             />
                         { descriptionError }
                         <View style={{paddingTop: 30}}></View>
-                        <TouchableOpacity style={{ width: 150, height : 150, borderRadius : 10, borderWidth: 1, borderColor: 'grey'}} onPress={()=>this.pickImage()}>
-                        <View style={{ width: 150, height : 150, borderRadius : 10, borderWidth: 1, borderColor: 'grey', alignSelf : 'center', justifyContent : 'center'}}>
-                            {
-                                this.state.avatarSource != null ? <Image source={this.state.avatarSource} style={{width : 150, height : 150, borderRadius : 10}} /> : <Text style={{textAlign:"center"}}>Select a photo</Text>
-                            }
-                        </View>
-                            </TouchableOpacity>
+                        {
+                            resContentImg
+                        }
+                        <TouchableOpacity onPress={()=>that.pickImage()}>
+                            <View style={{ width: 150, padding: 10, height : 50, borderRadius : 10, borderWidth: 1, borderColor: '#59C2AF', alignSelf : 'center', justifyContent : 'center', flexDirection: "row"}}>
+                                <Icon name='camera' color='#59C2AF' size={25} />
+                                <Text style={{textAlign:"center", padding : 3, color : "#59C2AF"}}> Select a photo</Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
                 </ScrollView>;
 		dynamicBtn = <MKButton onPress={()=> this.doAdPost()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
                     POST AD
                 </MKButton>;
-	
         return (
             <View style={[{height : this.state.height, flex: 1, width : layoutWidth}]} onLayout={()=> this.updateLayout()}>
                 {displayContent}
