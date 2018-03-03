@@ -1,6 +1,6 @@
 'use strict';
 import React, {Component, PropTypes} from "react";
-import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, TouchableOpacity, AsyncStorage} from "react-native";
+import {View, StyleSheet, Animated, Text, TextInput, ScrollView, Dimensions, TouchableOpacity, AsyncStorage, Image} from "react-native";
 
 import CommonStyle from "../Styles/CommonStyle";
 import MKButton from "../Component/MKButton";
@@ -11,6 +11,7 @@ import MKSpinner from "../Component/MKSpinner";
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MultiSelect from 'react-native-multiple-select';
+var ImagePicker = require('react-native-image-picker');
 
 export default class AdPostPageTwo extends Component {
 
@@ -29,6 +30,7 @@ export default class AdPostPageTwo extends Component {
             startDate : '',
             adsDescription : '',
             imageArray : '',
+            avatarSource  : null,
             errorsJson:{
                 adsTitle : null,
                 noOfDaysToActive : null,
@@ -61,6 +63,44 @@ export default class AdPostPageTwo extends Component {
     updateMyState(value, keyName){
         this.setState({
             [keyName] : value
+        });
+    }
+
+    pickImage(){
+
+        var options = {
+            title: 'Select Avatar',
+            customButtons: [
+                {name: 'fb', title: 'Choose Photo from Facebook'},
+            ],
+            storageOptions: {
+                skipBackup: true,
+                path: 'images'
+            }
+        };
+
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            }
+            else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            }
+            else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            }
+            else {
+                let source = { uri: response.uri };
+               // alert(response.uri);
+                // You can also display the image using data:
+                // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                this.setState({
+                    avatarSource: source
+                });
+            }
         });
     }
 
@@ -237,6 +277,13 @@ export default class AdPostPageTwo extends Component {
                             />
                         { descriptionError }
                         <View style={{paddingTop: 30}}></View>
+                        <TouchableOpacity style={{ width: 150, height : 150, borderRadius : 10, borderWidth: 1, borderColor: 'grey'}} onPress={()=>this.pickImage()}>
+                        <View style={{ width: 150, height : 150, borderRadius : 10, borderWidth: 1, borderColor: 'grey', alignSelf : 'center', justifyContent : 'center'}}>
+                            {
+                                this.state.avatarSource != null ? <Image source={this.state.avatarSource} style={{width : 150, height : 150, borderRadius : 10}} /> : <Text style={{textAlign:"center"}}>Select a photo</Text>
+                            }
+                        </View>
+                            </TouchableOpacity>
                     </View>
                 </ScrollView>;
 		dynamicBtn = <MKButton onPress={()=> this.doAdPost()} style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}} textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'} btndisabled={this.state.isLoading}>
