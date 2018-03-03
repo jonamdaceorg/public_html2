@@ -241,7 +241,7 @@ export default class AdPostPageTwo extends Component {
         this.state.avatarSourceArray.map(function(value, key){
             if(value != null){
                 resContentImg.push(
-                    <View key={"image"+key} style={{ width: 120, height : 120, margin:5, borderRadius : 10, borderWidth: 1, borderColor: 'grey', alignSelf : 'center', justifyContent : 'center'}}>
+                    <View key={"image"+key} style={{ width: 120, height : 120, margin:5, borderRadius : 10, borderWidth: 1, borderColor: 'grey'}}>
                     {
                         value != null ? <View>
                             <Image source={value} style={{width : 120, height : 120, borderRadius : 10}} />
@@ -311,7 +311,7 @@ export default class AdPostPageTwo extends Component {
                             resContentImg
                         }
                         <TouchableOpacity onPress={()=>that.pickImage()}>
-                            <View style={{ width: 150, padding: 10, height : 50, borderRadius : 10, borderWidth: 1, borderColor: '#59C2AF', alignSelf : 'center', justifyContent : 'center', flexDirection: "row"}}>
+                            <View style={{ width: 150, padding: 10, height : 50, borderRadius : 10, borderWidth: 1,  marginTop:5, marginBottom:10, borderColor: '#59C2AF', justifyContent : 'center', flexDirection: "row"}}>
                                 <Icon name='camera' color='#59C2AF' size={25} />
                                 <Text style={{textAlign:"center", padding : 3, color : "#59C2AF"}}> Select a photo</Text>
                             </View>
