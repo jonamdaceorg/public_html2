@@ -191,7 +191,7 @@ export default class AdPostPageTwo extends Component {
         const { selectedItems } = this.state;
 
         var adsTitleError = null;
-        if(this.state.errorsJson.subCategoryId != null){
+        if(this.state.errorsJson.adsTitle != null){
             adsTitleError = <Text style={CommonStyle.errorText}>{this.state.errorsJson.adsTitle}</Text>;
         }
         var startDateError = null;

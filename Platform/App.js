@@ -6,8 +6,9 @@ import {
 	TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, DrawerNavigator } from 'react-navigation';
 
+import Menu from "./Component/menu/Menu";
 import Login from "./Templates/Login";
 import ForgotPassword from "./Templates/ForgotPassword";
 import HomeScreen from "./Templates/HomeScreen";
@@ -162,4 +163,21 @@ const SimpleApp = StackNavigator(
 	}
 );
 
+const easyRNRoute = DrawerNavigator({
+		HomeScreen: {
+			screen: HomeScreen,
+		},
+		Stack: {
+			screen: SimpleApp
+		}
+	}, {
+		contentComponent: Menu,
+		contentOptions: {
+		activeTintColor: "#e91e63",
+		style: {
+			flex: 1,
+			paddingTop: 15,
+		}
+	}
+});
 AppRegistry.registerComponent('OneStepShop', () => SimpleApp);
