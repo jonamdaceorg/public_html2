@@ -30,7 +30,7 @@ const SimpleApp = StackNavigator(
 			navigationOptions: ({ navigation }) => ({
 				tabBarLabel: 'Three',
 				tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
-				title: 'Ads Post Step - 1',
+				title: 'Post You Ads',
 				headerStyle: { backgroundColor: 'orange' },
 				headerTintColor: '#fff',
 				//headerRight: <Text navigation={navigation} >test</Text>
