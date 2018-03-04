@@ -4,6 +4,7 @@ import {
 	Text,
 	View,
 	TouchableOpacity,
+	AsyncStorage
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
@@ -25,6 +26,20 @@ import AdPostPageTwo from "./Templates/AdPostPageTwo";
 
 const SimpleApp = StackNavigator(
 	{
+		Home: {
+			screen: HomeScreen,
+		},
+		Login: {
+			screen: Login,
+			navigationOptions: ({ navigation }) => ({
+				tabBarLabel: 'Three',
+				tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+				title: 'Login',
+				headerStyle: { backgroundColor: 'orange' },
+				headerTintColor: '#fff',
+				//headerRight: <Text navigation={navigation} >test</Text>
+			})
+		},
 		AdPostPageOne: {
 			screen: AdPostPageOne,
 			navigationOptions: ({ navigation }) => ({
@@ -69,9 +84,6 @@ const SimpleApp = StackNavigator(
 				//headerRight: <Text navigation={navigation} >test</Text>
 			})
 		},
-		Home: {
-			screen: HomeScreen,
-		},
 		AdsGallery: {
 			screen: AdsGallery,
 			navigationOptions: ({ navigation }) => ({
@@ -102,7 +114,27 @@ const SimpleApp = StackNavigator(
 				title: 'Category',
 				headerStyle: { backgroundColor: 'orange' },
 				headerTintColor: '#fff',
-				//headerRight: <Text navigation={navigation} >test</Text>
+				headerRight: <TouchableOpacity onPress={()=> {
+					AsyncStorage.setItem('userid', ""); AsyncStorage.setItem('userCode', "");
+					AsyncStorage.setItem('active', ""); AsyncStorage.setItem('name', "");
+					AsyncStorage.setItem('lastlogin', ""); AsyncStorage.setItem('img', "");
+					AsyncStorage.setItem('username', "");
+					AsyncStorage.setItem('password', "");
+					navigation.navigate("Login");
+				}}>
+					<View
+						style={{ justifyContent : 'center', padding: 10}}>
+						<Icon name='sign-out' color='#FFF' size={25}/>
+					</View>
+				</TouchableOpacity>,
+				headerLeft: <TouchableOpacity onPress={()=> {
+					navigation.navigate("AdPostPageOne");
+				}}>
+					<View
+						style={{ justifyContent : 'center', padding: 10}}>
+						<Icon name='bars' color='#FFF' size={25}/>
+					</View>
+				</TouchableOpacity>,
 			})
 		},
 		SearchHistory: {
@@ -133,17 +165,6 @@ const SimpleApp = StackNavigator(
 				//headerRight: <Text navigation={navigation} >test</Text>
 			})
 
-		},
-		Login: {
-			screen: Login,
-			navigationOptions: ({ navigation }) => ({
-				tabBarLabel: 'Three',
-				tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
-				title: 'Login',
-				headerStyle: { backgroundColor: 'orange' },
-				headerTintColor: '#fff',
-				//headerRight: <Text navigation={navigation} >test</Text>
-			})
 		},
 		ForgotPassword: {
 			screen: ForgotPassword,
