@@ -39,9 +39,10 @@ export default class AdPostPageOne extends Component {
             width: width,
             stateId: ['92iijs7yta'],
             cityId: ['92iijs7yta'],
-            categoryId: '',
-            subCategoryId: ['92iijs7yta'],
+            categoryId: '0',
+            subCategoryId: "0",
             listItems: ds.cloneWithRows([]),
+            listItemsSubCategoryJson: ds.cloneWithRows([]),
             ds:ds,
             colorArray : ['','#dd0908','#ff9e29','#3fb7d2','#dd0908','#c119ce', '#1963ce','#7fbad8', '#df8012', '#dd0908', '#070c1f', '#f49ecf', '#1ca39d'],
             errorsJson: {
@@ -138,11 +139,46 @@ export default class AdPostPageOne extends Component {
         that.setState({isLoading: false});
     }
 
-    selectCategory(categoryId, category){
-        this.setState({
-            categoryId : categoryId,
-            category : category
+    async onPressToSetSubCategory(categoryId, subCategoryId, subCategory){
+        var that = this;
+
+        await that.setState({
+            subCategoryId : subCategoryId,
+            subCategory : subCategory,
+            isLoading: true
         });
+
+        setTimeout(function(){
+            that.setState({isLoading: false});
+        }, 500);
+
+    }
+
+   async onPressToSelectSubCategory(categoryId, category){
+
+        await this.setState({
+            categoryId : categoryId,
+            category : category,
+            subCategoryId : "0",
+            isLoading: true
+        });
+
+       var that = this;
+       var subUrl = "Frontend/getCommonJsonData";
+       var postJson = new FormData();
+       postJson.append("categoryId", that.state.categoryId);
+       postJson.append("subCategoryId", that.state.subCategoryId);
+       postJson.append("divId", "subCategoryIdDiv");
+        var data = await doPost(subUrl, postJson);
+        if (data != null) {
+            var subCategoryJson = data['jsonArrayData'];
+            subCategoryJson = subCategoryJson.sort(function (a, b) {
+                return parseInt(a.subCategoryId) - parseInt(b.subCategoryId);
+            });
+            that.updateMyState(that.state.ds.cloneWithRows(subCategoryJson), 'listItemsSubCategoryJson');
+        }
+        that.setState({isLoading: false});
+
     }
 
 
@@ -157,12 +193,34 @@ export default class AdPostPageOne extends Component {
             icons = icons.replace("fa fa-", "");
         return (
             <View style={{ width: 75, height: 100, alignItems:'center', marginTop : 5}}>
-                <TouchableOpacity onPress={()=>this.selectCategory(categoryId, category)} >
+                <TouchableOpacity onPress={()=>this.onPressToSelectSubCategory(categoryId, category)} >
                     <View style={{flexDirection: 'row', backgroundColor: '#FFF', borderRadius:25, width: 50, height: 50, alignItems:'center', justifyContent:'center'}}>
                         <Icon name={icons} color={color} size={20} />
                     </View>
                 </TouchableOpacity>
-                <Text style={{marginTop: 7, fontSize : 10, color: '#59C2AF', textAlign:'center'}}>{category}</Text>
+                <Text style={{marginTop: 7, fontSize : 10, color: '#59C2AF', textAlign:'center', fontWeight: 'bold'}}>{category}</Text>
+            </View>
+        );
+    }
+
+    renderSubCategoryGridItem(item) {
+        var subCategoryId = item.subCategoryId;
+        var categoryId = item.categoryId;
+        var subCategory = item.subCategory;
+        var icons = item.icons;
+        var color = this.state.colorArray[subCategoryId%12 + 1];
+        if(color == null)
+            color = "red";
+        if(icons != null)
+            icons = icons.replace("fa fa-", "");
+        return (
+            <View style={{ width: 75, height: 100, alignItems:'center', marginTop : 5}}>
+                <TouchableOpacity onPress={()=>this.onPressToSetSubCategory(categoryId, subCategoryId, subCategory)} >
+                    <View style={{flexDirection: 'row', backgroundColor: color, borderRadius:25, width: 50, height: 50, alignItems:'center', justifyContent:'center'}}>
+                        { /*<Icon name={icons} color={color} size={20} /> */}
+                    </View>
+                </TouchableOpacity>
+                <Text style={{marginTop: 7, fontSize : 10, color: '#59C2AF', textAlign:'center', fontWeight: 'bold'}}>{subCategory}</Text>
             </View>
         );
     }
@@ -185,11 +243,6 @@ export default class AdPostPageOne extends Component {
         if (this.state.errorsJson.cityId != null) {
             cityIdError = <Text
                 style={[CommonStyle.errorText, {paddingBottom : 20, paddingTop : -10}]}>{this.state.errorsJson.cityId}</Text>;
-        }
-        var subCategoryIdError = null;
-        if (this.state.errorsJson.subCategoryId != null) {
-            subCategoryIdError = <Text
-                style={[CommonStyle.errorText, {paddingBottom : 20, paddingTop : -10}]}>{this.state.errorsJson.subCategoryId}</Text>;
         }
 
         var items = [{
@@ -220,102 +273,34 @@ export default class AdPostPageOne extends Component {
             id: 'suudydjsjd',
             name: 'Abuja',
         }];
-        var displayContent = null;
         var dynamicBtn = null;
-
-        displayContent =
-            <View style={{flex: 1, width:inputWidth, alignSelf:'center', paddingTop : 20}}>
-                <MultiSelect
-                    hideTags
-                    single
-                    items={items}
-                    uniqueKey="id"
-                    ref={(component) => { this.multiSelect = component }}
-                    onSelectedItemsChange={(items) => this.onSelectedItemsChange('stateId', items)}
-                    selectedItems={ this.state.stateId }
-                    selectText="Select State"
-                    searchInputPlaceholderText="Search State..."
-                    onChangeInput={ (text)=> console.log(text)}
-                    altFontFamily="ProximaNova-Light"
-                    tagRemoveIconColor="#CCC"
-                    tagBorderColor="#CCC"
-                    tagTextColor="#CCC"
-                    selectedItemTextColor="#CCC"
-                    selectedItemIconColor="#CCC"
-                    itemTextColor="#000"
-                    displayKey="name"
-                    searchInputStyle={{ color: '#CCC'}}
-                    submitButtonColor="#CCC"
-                    submitButtonText="Submit"
-                    fixedHeight={true}
-
-                    />
-                { stateIdError }
-                <MultiSelect
-                    hideTags
-                    single
-                    items={items}
-                    uniqueKey="id"
-                    ref={(component) => { this.multiSelectNew = component }}
-                    onSelectedItemsChange={(items) => this.onSelectedItemsChange('cityId', items)}
-                    selectedItems={ this.state.cityId }
-                    selectText="Select City"
-                    searchInputPlaceholderText="Search City..."
-                    onChangeInput={ (text)=> console.log(text)}
-                    altFontFamily="ProximaNova-Light"
-                    tagRemoveIconColor="#CCC"
-                    tagBorderColor="#CCC"
-                    tagTextColor="#CCC"
-                    selectedItemTextColor="#CCC"
-                    selectedItemIconColor="#CCC"
-                    itemTextColor="#000"
-                    displayKey="name"
-                    searchInputStyle={{ color: '#CCC'}}
-                    submitButtonColor="#CCC"
-                    submitButtonText="Submit"
-                    fixedHeight={true}
-
-                    />
-                { cityIdError }
-                <MultiSelect
-                    hideTags
-                    single
-                    items={items}
-                    uniqueKey="id"
-                    ref={(component) => { this.multiSelectNew = component }}
-                    onSelectedItemsChange={(items) => this.onSelectedItemsChange('subCategoryId', items)}
-                    selectedItems={ this.state.subCategoryId }
-                    selectText="Select Sub Category"
-                    searchInputPlaceholderText="Search Sub Category..."
-                    onChangeInput={ (text)=> console.log(text)}
-                    altFontFamily="ProximaNova-Light"
-                    tagRemoveIconColor="#CCC"
-                    tagBorderColor="#CCC"
-                    tagTextColor="#CCC"
-                    selectedItemTextColor="#CCC"
-                    selectedItemIconColor="#CCC"
-                    itemTextColor="#000"
-                    displayKey="name"
-                    searchInputStyle={{ color: '#CCC'}}
-                    submitButtonColor="#CCC"
-                    submitButtonText="Submit"
-                    fixedHeight={true}
-
-                    />
-                { subCategoryIdError }
-            </View>;
-
         dynamicBtn = <MKButton onPress={()=> this.doContinue()}
                                style={{backgroundColor : '#59C2AF', borderColor: '#59C2AF', height:60}}
                                textStyle={{color: '#FFF'}} activityIndicatorColor={'orange'}
                                btndisabled={this.state.isLoading}>CONTINUE</MKButton>;
 
 
-        var subCategoryContent = null;
-        if(this.state.categoryId != ""){
-            subCategoryContent = <Text style={{fontWeight : "bold", paddingBottom : 15, paddingTop : 15}}>
+        var subCategoryContent = [];
+        if(this.state.categoryId != "0"){
+            subCategoryContent.push(<Text key={"categoryText"} style={{fontWeight : "bold", paddingBottom : 15, paddingTop : 15}}>
                 {this.state.category}
-            </Text>;
+            </Text>);
+            subCategoryContent.push(<ListView key={1}
+                horizontal={true}
+                pageSize = {2}
+                style={{flex:1}}
+                enableEmptySections={true}
+                dataSource={this.state.listItemsSubCategoryJson}
+                renderRow={(data) => this.renderSubCategoryGridItem(data)}
+                />);
+
+        }
+
+        var afterSubCategory = [];
+        if(this.state.subCategoryId != "0"){
+            afterSubCategory.push(<Text key={"subCategoryText"} style={{fontWeight : "bold", paddingBottom : 15, paddingTop : 15}}>
+                {this.state.category + " "} <Icon name={"chevron-right"} color={"#59C2AF"} size={15} /> {" " +this.state.subCategory}
+            </Text>);
         }
 
         return (
@@ -331,13 +316,11 @@ export default class AdPostPageOne extends Component {
                         dataSource={this.state.listItems}
                         renderRow={(data) => this.renderGridItem(data)}
                         />
-
                     {subCategoryContent}
-                    {displayContent}
-                    {dynamicBtn}
-                <MKSpinner visible={this.state.isLoading} textContent={"Please wait"}
-                           cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}}/>
+                    {afterSubCategory}
                 </ScrollView>
+                {dynamicBtn}
+                <MKSpinner visible={this.state.isLoading} textContent={"Please wait"} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}}/>
             </View>
         );
 
