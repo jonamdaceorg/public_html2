@@ -13,6 +13,7 @@ import {
     AsyncStorage,
     Image
 } from "react-native";
+import Geocoder from 'react-native-geocoder';
 
 import CommonStyle from "../Styles/CommonStyle";
 import MKButton from "../Component/MKButton";
@@ -51,13 +52,18 @@ export default class AdPostPageOne extends Component {
             adsDescription : '',
             avatarSource  : null,
             avatarSourceArray  : [],
-            stateId: ['92iijs7yta'],
-            cityId: ['92iijs7yta'],
             categoryId: '0',
             subCategoryId: "0",
             listItems: ds.cloneWithRows([]),
             listItemsSubCategoryJson: ds.cloneWithRows([]),
             ds:ds,
+            country : '',
+            state : '',
+            city : '',
+            countryId : '',
+            stateId : '',
+            cityId: '',
+            address : '',
             colorArray : ['','#dd0908','#ff9e29','#3fb7d2','#dd0908','#c119ce', '#1963ce','#7fbad8', '#df8012', '#dd0908', '#070c1f', '#f49ecf', '#1ca39d'],
             errorsJson: {
                 adsTitle : null,
@@ -225,7 +231,7 @@ export default class AdPostPageOne extends Component {
                 position: 'bottom',
             });
         },
-        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+        { enableHighAccuracy: true }
         );
 
         this.watchID = navigator.geolocation.watchPosition((position) => {
@@ -240,7 +246,33 @@ export default class AdPostPageOne extends Component {
     }
 
     getCurrentLocationAsString(){
-        return <Text>{JSON.stringify(this.state.lastPosition)}</Text>;
+        var that = this;
+        var coords = this.state.lastPosition.coords;
+        var latitude = coords['latitude'];
+        var longitude = coords['longitude'];
+        //alert(JSON.stringify(this.state.lastPosition) + latitude + "-" + longitude)
+        var NY = {
+            lat: latitude,
+            lng: longitude
+        };
+
+        Geocoder.geocodePosition(NY).then(res => {
+            //alert(JSON.stringify(res))
+            if(res.length > 0){
+                var fullAddress = res[0];
+
+                that.setState({
+                    country : fullAddress.country,
+                    state : fullAddress.adminArea,
+                    city : fullAddress.subAdminArea,
+                    //address : fullAddress.formattedAddress
+                    address : JSON.stringify(res[2])
+                });
+            }
+            //alert(JSON.stringify(res))
+        }).catch(err => console.log(err))
+
+        return <Text>{JSON.stringify(this.state.address)}</Text>;
     }
 
     async getCategoryListFromApps() {
