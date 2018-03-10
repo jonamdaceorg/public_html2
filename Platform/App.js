@@ -26,6 +26,18 @@ import AdPostPageTwo from "./Templates/AdPostPageTwo";
 
 const SimpleApp = StackNavigator(
 	{
+		AdPostPageOne: {
+			screen: AdPostPageOne,
+			navigationOptions: ({ navigation }) => ({
+				tabBarLabel: 'Three',
+				tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
+				title: 'Post You Ads',
+				headerStyle: { backgroundColor: 'orange' },
+				headerTintColor: '#fff',
+				//headerRight: <Text navigation={navigation} >test</Text>
+			})
+		},
+
 		Home: {
 			screen: HomeScreen,
 		},
@@ -35,17 +47,6 @@ const SimpleApp = StackNavigator(
 				tabBarLabel: 'Three',
 				tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
 				title: 'Login',
-				headerStyle: { backgroundColor: 'orange' },
-				headerTintColor: '#fff',
-				//headerRight: <Text navigation={navigation} >test</Text>
-			})
-		},
-		AdPostPageOne: {
-			screen: AdPostPageOne,
-			navigationOptions: ({ navigation }) => ({
-				tabBarLabel: 'Three',
-				tabBarIcon: ({ tintColor }) => <Icon name="favorite-border" size={35} color={tintColor} />,
-				title: 'Post You Ads',
 				headerStyle: { backgroundColor: 'orange' },
 				headerTintColor: '#fff',
 				//headerRight: <Text navigation={navigation} >test</Text>

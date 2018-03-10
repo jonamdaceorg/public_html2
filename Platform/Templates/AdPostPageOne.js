@@ -25,6 +25,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MultiSelect from 'react-native-multiple-select';
 var ImagePicker = require('react-native-image-picker');
 
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
+
 
 export default class AdPostPageOne extends Component {
 
@@ -33,6 +36,8 @@ export default class AdPostPageOne extends Component {
         super(props);
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
+            initialPosition: null,
+            lastPosition: null,
             stage: 0,
             selectedItems: [],
             isDateTimePickerVisible: false,
@@ -69,6 +74,7 @@ export default class AdPostPageOne extends Component {
         this.onFocus = this.onFocus.bind(this);
         this.onSelectedItemsChange = this.onSelectedItemsChange.bind(this);
     }
+    watchID: number = null;
 
     updateMyState(value, keyName) {
         this.setState({
@@ -200,6 +206,41 @@ export default class AdPostPageOne extends Component {
         } else {
             that.updateMyState(that.state.ds.cloneWithRows(JSON.parse(categoryJson)), 'listItems');
         }
+
+        MessageBarManager.registerMessageBar(this.refs.alert);
+        this.getCurrentLocation();
+    }
+
+    getCurrentLocation(){
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+           // const initialPosition = JSON.stringify(position);
+            this.setState({ initialPosition : position});
+        },
+        (error) => {
+            MessageBarManager.showAlert({
+                title: "Error!",
+                message: error.message,
+                alertType: "error",
+                position: 'bottom',
+            });
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+        );
+
+        this.watchID = navigator.geolocation.watchPosition((position) => {
+            //const lastPosition = JSON.stringify(position);
+            this.setState({ lastPosition : position});
+        });
+    }
+
+    componentWillUnmount = () => {
+        navigator.geolocation.clearWatch(this.watchID);
+        MessageBarManager.unregisterMessageBar();
+    }
+
+    getCurrentLocationAsString(){
+        return <Text>{JSON.stringify(this.state.lastPosition)}</Text>;
     }
 
     async getCategoryListFromApps() {
@@ -523,11 +564,18 @@ export default class AdPostPageOne extends Component {
             </Text>);
         }
 
+        var displayLocationContent = null;
+        if(that.state.lastPosition != null){
+            displayLocationContent = that.getCurrentLocationAsString();
+        }
         return (
             <View style={[{height : this.state.height, flex: 1, width : layoutWidth}]}
                   onLayout={()=> this.updateLayout()}>
                 <ScrollView style={{ flex: 1, padding : 10}}>
                     <Text style={{fontWeight : "bold",  paddingBottom : 15, paddingTop : 15}}>Please choose Category</Text>
+                    {
+                        displayLocationContent
+                    }
                     <ListView
                         horizontal={true}
                         pageSize = {2}
@@ -543,6 +591,7 @@ export default class AdPostPageOne extends Component {
                 </ScrollView>
                 {dynamicBtn}
                 <MKSpinner visible={this.state.isLoading} textContent={"Please wait"} cancelable={this.state.isCancelable} textStyle={{color: '#FFF'}}/>
+                <MessageBarAlert ref="alert" />
             </View>
         );
 
